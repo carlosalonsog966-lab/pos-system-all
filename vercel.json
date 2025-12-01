@@ -4,6 +4,6 @@
       "VITE_API_URL": "https://tu-backend-en-la-nube.com/api"
     },
     "command": "npm run build",
-    "outputDirectory": "dist"
+    "outputDirectory": "frontend/dist"
   }
 }
