@@ -3,7 +3,7 @@
     "env": {
       "VITE_API_URL": "https://tu-backend-en-la-nube.com/api"
     },
-    "command": "npm run build",
-    "outputDirectory": "frontend/dist"
+    "command": "cd pos-system/frontend && npm ci && npm run build",
+    "outputDirectory": "pos-system/frontend/dist"
   }
 }
