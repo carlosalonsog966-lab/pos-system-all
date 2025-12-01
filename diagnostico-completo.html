@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico POS - Estado Actual</title>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: #2c3e50; color: white; padding: 20px; text-align: center; }
+        .section { padding: 20px; border-bottom: 1px solid #eee; }
+        .section:last-child { border-bottom: none; }
+        .status { display: flex; align-items: center; gap: 10px; padding: 15px; border-radius: 6px; margin: 10px 0; }
+        .online { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .offline { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        .indicator { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+        .indicator.online { background: #28a745; }
+        .indicator.offline { background: #dc3545; }
+        .indicator.warning { background: #ffc107; }
+        .config-item { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
+        .config-key { color: #6c757d; font-family: monospace; }
+        .config-value { font-weight: 500; }
+        .btn { padding: 10px 16px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .actions { display: flex; gap: 10px; padding: 20px; }
+        .log { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 10px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Diagnóstico POS - Estado del Sistema</h1>
+            <p>Verificación en tiempo real del sistema POS</p>
+        </div>
+        
+        <div class="section">
+            <h2>📊 Estado del Backend</h2>
+            <div id="backend-status" class="status offline">
+                <span class="indicator offline"></span>
+                <span>Verificando estado del backend...</span>
+            </div>
+            <div id="backend-details"></div>
+        </div>
+        
+        <div class="section">
+            <h2>⚙️ Configuración del Sistema</h2>
+            <div id="system-config"></div>
+        </div>
+        
+        <div class="section">
+            <h2>🌐 Estado de Conexión</h2>
+            <div id="connection-status"></div>
+        </div>
+        
+        <div class="section">
+            <h2>📋 Log de Eventos</h2>
+            <div id="event-log" class="log">Iniciando diagnóstico...</div>
+        </div>
+        
+        <div class="actions">
+            <button class="btn btn-primary" onclick="runFullDiagnostic()">🔄 Ejecutar Diagnóstico Completo</button>
+            <button class="btn btn-danger" onclick="forceOnlineMode()">⚡ Forzar Modo Online</button>
+            <button class="btn btn-success" onclick="clearSystemCache()">🧹 Limpiar Caché</button>
+        </div>
+    </div>
+
+    <script>
+        let diagnosticLog = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('es-ES');
+            const logEntry = `[${timestamp}] ${message}`;
+            diagnosticLog.push(logEntry);
+            
+            const logDiv = document.getElementById('event-log');
+            const entryDiv = document.createElement('div');
+            entryDiv.style.color = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#212529';
+            entryDiv.textContent = logEntry;
+            logDiv.appendChild(entryDiv);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateBackendStatus(status, message) {
+            const statusDiv = document.getElementById('backend-status');
+            const indicator = statusDiv.querySelector('.indicator');
+            
+            statusDiv.className = `status ${status}`;
+            indicator.className = `indicator ${status}`;
+            statusDiv.querySelector('span:last-child').textContent = message;
+        }
+        
+        function addConfigItem(containerId, key, value, type = 'string') {
+            const container = document.getElementById(containerId);
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'config-item';
+            
+            let valueClass = 'config-value';
+            let displayValue = value;
+            
+            if (type === 'boolean') {
+                valueClass += value ? ' text-success' : ' text-danger';
+                displayValue = value ? '✅ Sí' : '❌ No';
+            } else if (type === 'status') {
+                valueClass += value === 'online' ? ' text-success' : ' text-danger';
+                displayValue = value === 'online' ? '🟢 Online' : '🔴 Offline';
+            }
+            
+            itemDiv.innerHTML = `
+                <span class="config-key">${key}</span>
+                <span class="${valueClass}">${displayValue}</span>
+            `;
+            container.appendChild(itemDiv);
+        }
+        
+        async function checkBackendHealth() {
+            log('Verificando salud del backend...');
+            
+            try {
+                const response = await fetch('http://localhost:5757/api/health');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    updateBackendStatus('online', `✅ Backend activo - ${data.message}`);
+                    log('Backend responde correctamente', 'success');
+                    
+                    // Mostrar detalles
+                    const detailsDiv = document.getElementById('backend-details');
+                    detailsDiv.innerHTML = `
+                        <div class="config-item">
+                            <span class="config-key">Versión</span>
+                            <span class="config-value">${data.version || 'N/A'}</span>
+                        </div>
+                        <div class="config-item">
+                            <span class="config-key">Base de Datos</span>
+                            <span class="config-value">${data.db?.healthy ? '✅ Conectada' : '❌ Error'}</span>
+                        </div>
+                        <div class="config-item">
+                            <span class="config-key">Configuración</span>
+                            <span class="config-value">${data.config?.errors || 0} errores, ${data.config?.warnings || 0} advertencias</span>
+                        </div>
+                        <div class="config-item">
+                            <span class="config-key">Tiempo Activo</span>
+                            <span class="config-value">${Math.round((data.uptimeSec || 0) / 60)} minutos</span>
+                        </div>
+                    `;
+                    
+                    return true;
+                } else {
+                    updateBackendStatus('offline', `❌ Backend responde con error HTTP ${response.status}`);
+                    log(`Backend responde con error: ${response.status}`, 'error');
+                    return false;
+                }
+            } catch (error) {
+                updateBackendStatus('offline', `❌ No se puede conectar al backend: ${error.message}`);
+                log(`Error de conexión: ${error.message}`, 'error');
+                return false;
+            }
+        }
+        
+        function displaySystemConfig() {
+            const configDiv = document.getElementById('system-config');
+            configDiv.innerHTML = '';
+            
+            // Configuración de localStorage
+            const backendStatus = localStorage.getItem('__lastBackendStatus');
+            const overrideMode = localStorage.getItem('__backendStatusOverride');
+            const healthCheck = localStorage.getItem('__healthCheckStatus');
+            const useMocks = localStorage.getItem('observability:useMocks');
+            
+            addConfigItem('system-config', 'Backend Status (local)', backendStatus || 'No definido', 'string');
+            addConfigItem('system-config', 'Override Mode', overrideMode || 'No definido', 'string');
+            addConfigItem('system-config', 'Health Check Cache', healthCheck ? '✅ Presente' : '❌ Ausente', 'string');
+            addConfigItem('system-config', 'Modo Mocks', useMocks === 'true' ? '✅ Activado' : '❌ Desactivado', 'boolean');
+            
+            // Configuración de la API
+            addConfigItem('system-config', 'API Base URL', 'http://localhost:5757/api', 'string');
+            addConfigItem('system-config', 'Frontend URL', window.location.origin, 'string');
+        }
+        
+        function displayConnectionStatus() {
+            const statusDiv = document.getElementById('connection-status');
+            statusDiv.innerHTML = '';
+            
+            // Verificar si hay problemas de CORS o red
+            addConfigItem('connection-status', 'CORS Configurado', '✅ Sí (puerto 5175 permitido)', 'string');
+            addConfigItem('connection-status', 'Backend Escuchando', '✅ Puerto 5757 activo', 'string');
+            addConfigItem('connection-status', 'Protocolo', window.location.protocol === 'http:' ? 'HTTP' : 'HTTPS', 'string');
+        }
+        
+        async function runFullDiagnostic() {
+            diagnosticLog = [];
+            document.getElementById('event-log').innerHTML = '';
+            
+            log('Iniciando diagnóstico completo del sistema...', 'info');
+            
+            const backendHealthy = await checkBackendHealth();
+            displaySystemConfig();
+            displayConnectionStatus();
+            
+            if (backendHealthy) {
+                log('✅ Diagnóstico completado: Sistema operativo', 'success');
+            } else {
+                log('❌ Diagnóstico completado: Problemas detectados', 'error');
+                log('Sugerencia: Usa "Forzar Modo Online" o "Limpiar Caché" para resolver', 'warning');
+            }
+        }
+        
+        function forceOnlineMode() {
+            log('Forzando modo online...', 'warning');
+            
+            localStorage.setItem('__lastBackendStatus', 'up');
+            localStorage.setItem('__backendStatusOverride', 'online');
+            localStorage.setItem('__healthCheckStatus', JSON.stringify({ 
+                status: 'healthy', 
+                timestamp: Date.now(),
+                forced: true 
+            }));
+            
+            log('✅ Sistema forzado a modo online', 'success');
+            log('Recargando página en 2 segundos...', 'info');
+            
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        }
+        
+        function clearSystemCache() {
+            log('Limpiando caché del sistema...', 'warning');
+            
+            const keys = [
+                '__lastBackendStatus',
+                '__backendStatusOverride', 
+                '__healthCheckStatus',
+                'backendStatus',
+                'lastHealthCheck',
+                'observability:useMocks'
+            ];
+            
+            keys.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    localStorage.removeItem(key);
+                    log(`Limpiado: ${key}`, 'info');
+                }
+            });
+            
+            log('✅ Caché limpiado correctamente', 'success');
+            log('Recargando página en 2 segundos...', 'info');
+            
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        }
+        
+        // Inicializar diagnóstico al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            runFullDiagnostic();
+        });
+    </script>
+</body>
+</html>

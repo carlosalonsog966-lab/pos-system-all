@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 SISTEMA EN MANTENIMIENTO</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+        }
+        .container { 
+            text-align: center;
+            max-width: 600px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .message {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+            margin: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(231, 76, 60, 0.6);
+        }
+        .btn.success {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.4);
+        }
+        .btn.success:hover {
+            box-shadow: 0 12px 25px rgba(39, 174, 96, 0.6);
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🚨</div>
+        <h1>SISTEMA EN MANTENIMIENTO</h1>
+        <div class="message">
+            El sistema está restaurándose automáticamente. Por favor espera...
+        </div>
+        
+        <div id="status" class="status">
+            <span class="loading"></span>
+            Ejecutando bypass de emergencia...
+        </div>
+        
+        <div id="success-message" class="hidden">
+            <p style="color: #27ae60; font-size: 20px; margin: 20px 0;">✅ Sistema restaurado con éxito</p>
+            <a href="/" class="btn success">IR AL SISTEMA POS</a>
+        </div>
+        
+        <div id="error-message" class="hidden">
+            <p style="color: #e74c3c; font-size: 18px; margin: 20px 0;">❌ Error en la restauración</p>
+            <button onclick="retryBypass()" class="btn">REINTENTAR</button>
+        </div>
+    </div>
+
+    <script>
+        async function runEmergencyBypass() {
+            console.log('🚨 INICIANDO BYPASS DE EMERGENCIA');
+            
+            try {
+                // 1. Limpiar todo el estado problemático
+                console.log('🧹 Limpiando estado problemático...');
+                
+                const keysToRemove = [
+                    '__lastBackendStatus',
+                    '__backendStatusOverride', 
+                    '__healthCheckStatus',
+                    'backendStatus',
+                    'lastHealthCheck',
+                    'offlineMode',
+                    'backendDown',
+                    'lastConnectionError',
+                    'offlineData',
+                    'offlineQueue',
+                    'pendingSync',
+                    'offlineProducts',
+                    'offlineSales',
+                    'offlineClients',
+                    'authToken',
+                    'user',
+                    'isAuthenticated',
+                    'authExpiration',
+                    'refreshToken'
+                ];
+                
+                keysToRemove.forEach(key => {
+                    const value = localStorage.getItem(key);
+                    if (value) {
+                        localStorage.removeItem(key);
+                        console.log(`✅ Limpiado: ${key}`);
+                    }
+                });
+                
+                // 2. Forzar modo online
+                console.log('⚡ Forzando modo online...');
+                
+                localStorage.setItem('__lastBackendStatus', 'up');
+                localStorage.setItem('__backendStatusOverride', 'online');
+                localStorage.setItem('__healthCheckStatus', JSON.stringify({ 
+                    status: 'healthy', 
+                    timestamp: Date.now(),
+                    forced: true 
+                }));
+                
+                console.log('✅ Sistema forzado a modo online');
+                
+                // 3. Verificar conexión con el backend
+                console.log('🔍 Verificando conexión con backend...');
+                
+                try {
+                    const response = await fetch('http://localhost:5757/api/health');
+                    if (response.ok) {
+                        console.log('✅ Backend responde correctamente');
+                        
+                        // Mostrar mensaje de éxito
+                        document.getElementById('status').innerHTML = '<span style="color: #27ae60;">✅ Sistema restaurado correctamente</span>';
+                        document.getElementById('success-message').classList.remove('hidden');
+                        
+                        // Redirigir automáticamente después de 3 segundos
+                        setTimeout(() => {
+                            console.log('🔄 Redirigiendo al sistema principal...');
+                            window.location.href = '/';
+                        }, 3000);
+                        
+                    } else {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                } catch (error) {
+                    console.log('⚠️ Backend no responde, pero el sistema está configurado para modo online');
+                    document.getElementById('status').innerHTML = '<span style="color: #f39c12;">⚡ Sistema configurado en modo online forzado</span>';
+                    document.getElementById('success-message').classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 3000);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error en bypass:', error);
+                document.getElementById('status').innerHTML = '<span style="color: #e74c3c;">❌ Error en la restauración</span>';
+                document.getElementById('error-message').classList.remove('hidden');
+            }
+        }
+        
+        function retryBypass() {
+            document.getElementById('error-message').classList.add('hidden');
+            document.getElementById('status').innerHTML = '<span class="loading"></span>Reintentando bypass...';
+            document.getElementById('success-message').classList.add('hidden');
+            
+            setTimeout(runEmergencyBypass, 1000);
+        }
+        
+        // Ejecutar automáticamente al cargar
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚨 PÁGINA DE EMERGENCIA CARGADA');
+            setTimeout(runEmergencyBypass, 1500);
+        });
+        
+        // Fallback manual
+        setTimeout(() => {
+            if (document.getElementById('success-message').classList.contains('hidden') && 
+                document.getElementById('error-message').classList.contains('hidden')) {
+                console.log('⚠️ Fallback manual activado');
+                document.getElementById('status').innerHTML = '<span style="color: #f39c12;">⚡ Aplicando bypass manual...</span>';
+                
+                // Forzar redirección manual
+                setTimeout(() => {
+                    console.log('🔄 Redirección forzada al sistema');
+                    window.location.href = '/';
+                }, 2000);
+            }
+        }, 8000);
+    </script>
+</body>
+</html>

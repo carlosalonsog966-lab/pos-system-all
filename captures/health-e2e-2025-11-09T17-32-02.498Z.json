@@ -1,0 +1,78 @@
+{
+  "startedAt": "2025-11-09T17:32:02.123Z",
+  "base": "http://localhost:5656/api",
+  "port": 5656,
+  "https": false,
+  "authProvided": false,
+  "checks": [
+    {
+      "name": "baseline",
+      "statusText": "ok"
+    },
+    {
+      "name": "test-health",
+      "url": "http://localhost:5656/api/test-health",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "health",
+      "url": "http://localhost:5656/api/health",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "settings/public",
+      "url": "http://localhost:5656/api/settings/public",
+      "ok": false,
+      "status": 401
+    },
+    {
+      "name": "settings/system-info",
+      "url": "http://localhost:5656/api/settings/system-info",
+      "ok": false,
+      "status": 401
+    },
+    {
+      "name": "meta/config (fields)",
+      "url": "http://localhost:5656/api/meta/config?fields=env,db,cors,uploads,envFlags",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "name": "sales/health",
+      "url": "http://localhost:5656/api/sales/health",
+      "ok": false,
+      "status": 401
+    },
+    {
+      "name": "jobs/health",
+      "url": "http://localhost:5656/api/jobs/health",
+      "ok": false,
+      "status": 401
+    },
+    {
+      "name": "offline/status",
+      "url": "http://localhost:5656/offline/status",
+      "ok": false,
+      "status": 404
+    },
+    {
+      "name": "refund-smoke",
+      "ok": true,
+      "status": 200
+    }
+  ],
+  "baseline": "ok",
+  "corsAlignment": {
+    "aligned": true,
+    "allowed": true,
+    "details": {
+      "expectedOrigin": "http://localhost:4173",
+      "backendFrontendUrl": "http://localhost:4173",
+      "backendOrigin": "http://localhost:4173",
+      "computedOriginsCount": 16
+    }
+  },
+  "finishedAt": "2025-11-09T17:32:02.498Z"
+}

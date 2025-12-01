@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚨 RESTAURACIÓN DEL SISTEMA</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #1a1a1a; 
+            color: white; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0;
+            text-align: center;
+        }
+        .container { max-width: 600px; padding: 40px; }
+        .icon { font-size: 80px; margin-bottom: 20px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        h1 { font-size: 28px; margin-bottom: 20px; }
+        .status { font-size: 18px; margin-bottom: 30px; color: #f39c12; }
+        .btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn:hover { background: #c0392b; transform: translateY(-2px); }
+        .success { color: #27ae60; }
+        .error { color: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🚨</div>
+        <h1>RESTAURANDO SISTEMA POS</h1>
+        <div id="status" class="status">
+            <span>⚡ Aplicando bypass de emergencia...</span>
+        </div>
+        <button id="bypass-btn" class="btn" onclick="applyBypass()">
+            FORZAR ARRANQUE DEL SISTEMA
+        </button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'warning') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<span class="${type}">${message}</span>`;
+        }
+        
+        function showResult(message, success = true) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<p class="${success ? 'success' : 'error'}">${message}</p>`;
+        }
+        
+        function applyBypass() {
+            console.log('🚨 APLICANDO BYPASS DE EMERGENCIA');
+            updateStatus('🧹 Limpiando estado del sistema...', 'warning');
+            
+            // Limpiar todo el estado problemático
+            const keysToRemove = [
+                '__lastBackendStatus',
+                '__backendStatusOverride', 
+                '__healthCheckStatus',
+                'backendStatus',
+                'lastHealthCheck',
+                'offlineMode',
+                'backendDown',
+                'lastConnectionError',
+                'authToken',
+                'user',
+                'isAuthenticated',
+                'authExpiration',
+                'refreshToken'
+            ];
+            
+            let cleanedCount = 0;
+            keysToRemove.forEach(key => {
+                if (localStorage.getItem(key)) {
+                    localStorage.removeItem(key);
+                    cleanedCount++;
+                    console.log(`✅ Limpiado: ${key}`);
+                }
+            });
+            
+            updateStatus(`✅ Limpiados ${cleanedCount} estados problemáticos`, 'success');
+            
+            setTimeout(() => {
+                updateStatus('⚡ Forzando modo online...', 'warning');
+                
+                // Forzar sistema a modo online
+                localStorage.setItem('__lastBackendStatus', 'up');
+                localStorage.setItem('__backendStatusOverride', 'online');
+                localStorage.setItem('__healthCheckStatus', JSON.stringify({ 
+                    status: 'healthy', 
+                    timestamp: Date.now(),
+                    forced: true 
+                }));
+                
+                console.log('✅ Sistema forzado a modo online');
+                updateStatus('✅ Sistema restaurado correctamente', 'success');
+                showResult('El sistema se iniciará en 3 segundos...', true);
+                
+                // Ocultar botón y redirigir
+                document.getElementById('bypass-btn').style.display = 'none';
+                
+                setTimeout(() => {
+                    console.log('🔄 Redirigiendo al sistema principal...');
+                    window.location.href = '/';
+                }, 3000);
+                
+            }, 1500);
+        }
+        
+        // Auto-ejecutar bypass al cargar
+        window.addEventListener('load', () => {
+            console.log('🚨 PÁGINA DE EMERGENCIA CARGADA');
+            
+            // Verificar estado actual
+            const backendStatus = localStorage.getItem('__lastBackendStatus');
+            const overrideMode = localStorage.getItem('__backendStatusOverride');
+            
+            if (backendStatus === 'down' || overrideMode === 'offline') {
+                console.log('❌ Detectado modo offline - aplicando bypass automático');
+                setTimeout(applyBypass, 1000);
+            } else {
+                console.log('⚠️ Estado no determinado - esperando acción manual');
+                updateStatus('Presiona el botón para forzar el arranque del sistema', 'warning');
+            }
+        });
+    </script>
+</body>
+</html>

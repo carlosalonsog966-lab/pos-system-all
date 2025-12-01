@@ -1,0 +1,80 @@
+# Large build files
+src-tauri/
+target/
+release/
+*.rlib
+*.dll
+*.so
+*.dylib
+*.exe
+
+# Node modules (will be installed during build)
+node_modules/
+**/node_modules/
+
+# Build artifacts
+dist/
+build/
+target/
+
+# Database files (use environment variables)
+database.sqlite
+database.sqlite-journal
+*.db
+*.sqlite
+
+# Large upload and backup directories
+uploads/
+backups/
+captures/
+logs/
+
+# Test and coverage reports
+test-results/
+coverage/
+.nyc_output/
+playwright-report/
+
+# IDE and temporary files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Documentation and large markdown files (keep essential ones)
+*.md
+!README.md
+!package.json
+!vercel.json
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+
+# Rust specific (Tauri)
+Cargo.lock
+/target/
+**/*.rlib
+
+# Large verification files
+verification-summary-*.json
+verification-report-*.csv
+exports/status/*.html
+exports/status/*.json
+
+# Keep only essential files for deployment
+!frontend/src/
+!frontend/public/
+!frontend/package.json
+!backend/src/
+!backend/package.json
+!shared/
+!vercel.json
+!.gitignore
+!.vercelignore
