@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "cd frontend && npm run dev",
-    "build": "cd frontend && npm install && npm run build",
-    "start": "cd frontend && npm run preview"
+    "dev": "cd pos-system/frontend && npm run dev",
+    "build": "cd pos-system/frontend && npm ci && npm run build",
+    "start": "cd pos-system/frontend && npm run preview"
   },
   "dependencies": {},
   "devDependencies": {}
