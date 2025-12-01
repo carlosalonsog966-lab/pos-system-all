@@ -1,0 +1,85 @@
+name: Contratos API - Verificación
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/**'
+      - 'release/**'
+  pull_request:
+    branches:
+      - '**'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-contracts:
+    name: Validar exports/endpoints.*
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pos-system
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      - name: Install
+        run: npm ci
+      - name: Ejecutar validador de contratos
+        run: node scripts/validate-contracts.js
+      - name: Comparar rutas backend vs contratos
+        run: node scripts/compare-contracts.js
+      - name: Copiar endpoints a exports/status
+        run: node scripts/copy-endpoints-to-status.js
+      - name: Sincronizar artefactos de status
+        run: npm run status:sync
+      - name: Subir contratos como artefacto
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-contracts
+          path: |
+            pos-system/exports/endpoints.yaml
+            pos-system/exports/endpoints.jsonl
+            pos-system/exports/endpoints.csv
+            pos-system/exports/endpoints.html
+            pos-system/exports/test/contracts-report.json
+            pos-system/exports/status/contracts-report.json
+            pos-system/exports/status/endpoints.jsonl
+            pos-system/exports/status/endpoints.html
+          if-no-files-found: error
+      - name: Publicar dashboard de estado
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: status-dashboard
+          path: |
+            pos-system/exports/status/**
+          if-no-files-found: warn
+      - name: Comentar PR con enlaces a contratos y dashboard
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [
+              `### Verificación de Contratos API`,
+              `Artefactos publicados: **api-contracts**, **status-dashboard**`,
+              `- Descarga \`api-contracts\` para revisar \`endpoints.yaml\`, \`endpoints.csv\`, \`endpoints.html\` y el reporte de contratos.`,
+              `- Descarga \`status-dashboard\` y abre \`index.html\` para el dashboard completo.`,
+              ``,
+              `Enlace a la ejecución: ${runUrl} (ver sección Artifacts)`
+            ].join('\n');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });

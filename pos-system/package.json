@@ -1,0 +1,55 @@
+{
+    "name":  "pos-system",
+    "version":  "1.0.0",
+    "description":  "Sistema POS para JoyerÃ­a - Monorepo",
+    "main":  "index.js",
+  "scripts":  {
+                    "migrate:sqlite":  "cd backend \u0026\u0026 npm run migrate:sqlite",
+                    "seed":  "cd backend \u0026\u0026 npm run seed",
+                    "dev":  "concurrently -n backend,frontend -c \"bgBlue.bold,bgMagenta.bold\" \"cd backend \u0026\u0026 npm run dev\" \"cd frontend \u0026\u0026 npm run dev\"",
+                    "dev:backend":  "cd backend \u0026\u0026 npm run dev",
+                    "dev:frontend":  "cd frontend \u0026\u0026 npm run dev",
+                    "build":  "npm run build:backend \u0026\u0026 npm run build:frontend",
+                    "build:backend":  "cd backend \u0026\u0026 npm run build",
+                    "build:frontend":  "cd frontend \u0026\u0026 npm run build",
+                    "build:all":  "npm run build:backend \u0026\u0026 npm run build:frontend",
+                    "work:dev":  "node launcher/dev.js",
+                    "work:dev:watch":  "concurrently -n launcher,watch -c \"bgBlue.bold,bgMagenta.bold\" \"node launcher/dev.js\" \"node launcher/watchdog.js\"",
+                    "work:prod":  "node launcher/run.js",
+                    "check:health":  "node backend/test-server-health.js",
+                    "preview":  "cd frontend \u0026\u0026 vite preview --port 5174",
+    "smoke":  "node launcher/smoke.js",
+    "watch:health":  "node launcher/watchdog.js",
+    "verify:alerts":  "node launcher/file-verification-alerts.js",
+    "verify:alerts:once":  "node launcher/file-verification-alerts.js --once",
+                    "tauri:dev":  "npm run build \u0026\u0026 tauri dev",
+                    "tauri:build":  "npm run build \u0026\u0026 tauri build",
+                    "test":  "echo \"Error: no test specified\" \u0026\u0026 exit 1",
+                    "prepare": "husky install",
+                    "health:e2e":  "node launcher/health-e2e.js",
+                    "health:e2e:refund":  "cross-env REFUND_SMOKE=1 node launcher/health-e2e.js",
+                    "smoke:health:once": "node launcher/run-health-smoke.js --once",
+                    "smoke:health": "node launcher/run-health-smoke.js",
+                    "contracts:compare": "node scripts/compare-contracts.js",
+                    "contracts:rewrite": "node scripts/compare-contracts.js --rewrite-contracts",
+                    "status:sync:endpoints": "node scripts/copy-endpoints-to-status.js",
+                    "status:sync": "npm run contracts:compare && node scripts/copy-endpoints-to-status.js && node scripts/sync-status-artifacts.js"
+                },
+    "keywords":  [
+                     "pos",
+                     "jewelry",
+                     "tauri",
+                     "react",
+                     "typescript"
+                 ],
+    "author":  "",
+  "license":  "ISC",
+  "dependencies": {
+    "pdfkit": "^0.17.2"
+  },
+  "devDependencies":  {
+    "concurrently":  "^9.2.1",
+    "cross-env":  "^10.1.0",
+    "@tauri-apps/cli":  "^1.5.10"
+  }
+}

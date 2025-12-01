@@ -1,0 +1,2 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/inventory","cycle-count-apply-button","activate","{""ui"":[""toast"",""domChanged""],""network"":[{""method"":""POST"",""endpoint"":""/inventory/cycle-counts/:id/apply""}]}","","","","","","","","FAIL","control no encontrado"

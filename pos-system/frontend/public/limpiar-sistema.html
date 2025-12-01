@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Sistema POS</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); text-align: center; max-width: 500px; }
+        h1 { color: #333; margin-bottom: 20px; }
+        .btn { background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; font-size: 16px; margin: 10px; }
+        .btn:hover { background: #0056b3; }
+        .btn-success { background: #28a745; }
+        .btn-success:hover { background: #218838; }
+        .console { background: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 5px; text-align: left; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto; margin-top: 20px; }
+        .status { margin: 20px 0; padding: 15px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 LIMPIADOR DE SISTEMA POS</h1>
+        
+        <div id="status" class="status warning">
+            <strong>⚠️ Problema detectado:</strong> El sistema está cargando datos localmente debido a problemas de conexión.
+        </div>
+
+        <p>Esto puede deberse a configuraciones en el almacenamiento local del navegador que están bloqueando la conexión al backend.</p>
+        
+        <button id="limpiarBtn" class="btn">🧹 Limpiar Almacenamiento</button>
+        <button id="recargarBtn" class="btn btn-success" style="display:none;">🔄 Recargar Sistema</button>
+        
+        <div id="console" class="console" style="display:none;">
+            <div id="console-content"></div>
+        </div>
+    </div>
+
+    <script>
+        const limpiarBtn = document.getElementById('limpiarBtn');
+        const recargarBtn = document.getElementById('recargarBtn');
+        const consoleEl = document.getElementById('console');
+        const consoleContent = document.getElementById('console-content');
+        const statusEl = document.getElementById('status');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('es-CO');
+            const color = type === 'error' ? 'red' : type === 'success' ? 'green' : type === 'warning' ? 'orange' : 'black';
+            consoleContent.innerHTML += `<div style="color: ${color}; margin: 2px 0;">[${timestamp}] ${message}</div>`;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        limpiarBtn.addEventListener('click', async function() {
+            limpiarBtn.disabled = true;
+            limpiarBtn.textContent = '🧹 Limpiando...';
+            consoleEl.style.display = 'block';
+            
+            log('🧹 Iniciando limpieza del sistema...', 'info');
+            
+            try {
+                // 1. Verificar almacenamiento actual
+                log('📊 Analizando almacenamiento local...', 'info');
+                
+                const keysToCheck = [
+                    'observability:useMocks',
+                    '__lastBackendStatus',
+                    'backendDown',
+                    'backendStatus',
+                    'useMocks',
+                    'lastHealthCheck',
+                    '__backendStatus',
+                    'forceOfflineMode'
+                ];
+                
+                let foundIssues = false;
+                keysToCheck.forEach(key => {
+                    const value = localStorage.getItem(key);
+                    if (value !== null) {
+                        log(`🗑️ Encontrado: ${key} = ${value}`, 'warning');
+                        foundIssues = true;
+                    }
+                });
+                
+                if (!foundIssues) {
+                    log('✅ No se encontraron configuraciones problemáticas', 'success');
+                }
+                
+                // 2. Limpiar configuraciones problemáticas
+                log('🧹 Eliminando configuraciones conflictivas...', 'info');
+                
+                let cleanedCount = 0;
+                keysToCheck.forEach(key => {
+                    if (localStorage.getItem(key) !== null) {
+                        localStorage.removeItem(key);
+                        cleanedCount++;
+                        log(`✅ Eliminado: ${key}`, 'success');
+                    }
+                });
+                
+                log(`🧹 Limpieza completada: ${cleanedCount} elementos removidos`, 'success');
+                
+                // 3. Verificar conexión después de limpieza
+                log('🔄 Verificando conexión al backend...', 'info');
+                
+                try {
+                    const response = await fetch('/api/health');
+                    if (response.ok) {
+                        const data = await response.json();
+                        log(`✅ Backend responde: ${data.message}`, 'success');
+                        statusEl.className = 'status success';
+                        statusEl.innerHTML = '<strong>✅ Conexión restablecida!</strong> El backend está respondiendo correctamente.';
+                    } else {
+                        log(`❌ Backend error: ${response.status}`, 'error');
+                        statusEl.className = 'status error';
+                        statusEl.innerHTML = '<strong>❌ Backend sin respuesta</strong> El servidor puede estar detenido.';
+                    }
+                } catch (error) {
+                    log(`❌ Error de conexión: ${error.message}`, 'error');
+                    statusEl.className = 'status error';
+                    statusEl.innerHTML = '<strong>❌ Error de conexión</strong> Verifica que el backend esté ejecutándose.';
+                }
+                
+                // 4. Mostrar botón de recarga
+                recargarBtn.style.display = 'inline-block';
+                log('✅ Limpieza finalizada. Puedes recargar el sistema.', 'success');
+                
+            } catch (error) {
+                log(`❌ Error durante limpieza: ${error.message}`, 'error');
+                statusEl.className = 'status error';
+                statusEl.innerHTML = '<strong>❌ Error</strong> Hubo un problema durante la limpieza.';
+            } finally {
+                limpiarBtn.disabled = false;
+                limpiarBtn.textContent = '🧹 Limpiar Almacenamiento';
+            }
+        });
+
+        recargarBtn.addEventListener('click', function() {
+            log('🔄 Recargando sistema...', 'info');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000);
+        });
+
+        // Verificación inicial
+        window.addEventListener('load', async function() {
+            log('🔍 Verificando estado del sistema...', 'info');
+            
+            // Verificar almacenamiento local
+            const problematicKeys = [
+                'observability:useMocks',
+                'backendDown',
+                '__lastBackendStatus'
+            ];
+            
+            let hasIssues = false;
+            problematicKeys.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value !== null) {
+                    hasIssues = true;
+                }
+            });
+            
+            if (hasIssues) {
+                log('⚠️ Se detectaron configuraciones problemáticas', 'warning');
+            } else {
+                log('✅ Almacenamiento local limpio', 'success');
+            }
+        });
+    </script>
+</body>
+</html>

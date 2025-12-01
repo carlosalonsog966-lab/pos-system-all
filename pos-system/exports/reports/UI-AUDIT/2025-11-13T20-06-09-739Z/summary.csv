@@ -1,0 +1,2 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/cash-register","cash-register-close-button","activate","{""ui"":[""toast"",""domChanged""],""network"":[{""method"":""POST"",""endpoint"":""/cash-register/close/:id""}],""persist"":[""reloadPersist""]}","","","","","","","","FAIL","control no encontrado"

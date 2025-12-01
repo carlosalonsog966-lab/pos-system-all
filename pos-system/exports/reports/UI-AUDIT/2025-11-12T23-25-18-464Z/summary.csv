@@ -1,0 +1,4 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/codes","codigos.print","activate","{""ui"":[""domChanged""]}","","","","","","","","PASS","{""networkHit"":false,""domChanged"":false,""routeChanged"":false,""modalChanged"":false,""toast"":false,""consoleErrors"":0,""pageErrors"":0}"
+"POS","/codes","codigos.scan-test","activate","{""ui"":[""domChanged"",""toast""]}","","","","","","","","PASS","{""networkHit"":false,""domChanged"":false,""routeChanged"":false,""modalChanged"":false,""toast"":false,""consoleErrors"":0,""pageErrors"":0}"
+"POS","/rankings","rankings.filter.apply","activate","{""ui"":[""domChanged""]}","","","","","","","","FAIL","{""networkHit"":false,""domChanged"":false,""routeChanged"":false,""modalChanged"":false,""toast"":false,""consoleErrors"":0,""pageErrors"":0}"

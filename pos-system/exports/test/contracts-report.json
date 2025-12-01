@@ -1,0 +1,10 @@
+{
+  "summary": {
+    "backendRoutesCount": 233,
+    "contractRoutesCount": 233,
+    "missingInContractsCount": 0,
+    "extraInContractsCount": 0
+  },
+  "missingInContracts": [],
+  "extraInContracts": []
+}

@@ -1,0 +1,16 @@
+:root{
+  --bg: #F7F3ED;          /* base-porcelain */
+  --panel: #EFE7DA;       /* base-ivory */
+  --text: #1A1A1A;        /* text-charcoal */
+  --text-alt: #3A2F26;    /* text-warm */
+  --gold: #C8A96A;
+  --gold-hover: #B6904D;
+  --line:#E7DED2;
+  --ok:#2E7D32; --err:#C0392B; --info:#1E88E5; --warn:#D48806;
+}
+html,body,#root{height:100%}
+body{background:var(--bg); color:var(--text); font-family:Inter,system-ui,sans-serif}
+/* Scrollbars sutiles */
+*::-webkit-scrollbar{height:10px;width:10px}
+*::-webkit-scrollbar-thumb{background:#D9C7A0;border-radius:10px}
+*::-webkit-scrollbar-track{background:#F3ECE2}

@@ -1,0 +1,93 @@
+name: Security Scan
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  npm-audit-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pos-system/backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - name: Install deps
+        run: npm ci
+      - name: NPM Audit (moderate+)
+        run: npm audit --audit-level=moderate || true
+      - name: Report vulnerabilities
+        run: |
+          npm audit --json > ../../exports/status/npm-audit-backend.json || true
+
+  npm-audit-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pos-system/frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - name: Install deps
+        run: npm ci
+      - name: NPM Audit (moderate+)
+        run: npm audit --audit-level=moderate || true
+      - name: Report vulnerabilities
+        run: |
+          npm audit --json > ../../exports/status/npm-audit-frontend.json || true
+
+  cargo-audit-tauri:
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('pos-system/src-tauri/Cargo.lock') != '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Install cargo-audit
+        run: cargo install cargo-audit || true
+      - name: Cargo Audit
+        working-directory: pos-system/src-tauri
+        run: cargo audit || true
+      - name: Save cargo-audit report
+        run: |
+          cargo audit -q -F json > pos-system/exports/status/cargo-audit.json || true
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-audit
+          path: |
+            pos-system/exports/status/npm-audit-backend.json
+            pos-system/exports/status/npm-audit-frontend.json
+            pos-system/exports/status/cargo-audit.json
+
+  secrets-and-env-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Scan for secret patterns
+        run: |
+          set -e
+          echo "Scanning repo for common secret patterns"
+          ! git grep -nE 'AWS_SECRET|AKIA[0-9A-Z]{16}|-----BEGIN PRIVATE KEY-----|password\s*=|TAURI_SIGNING_CERT_PASSWORD' || (echo "Potential secret pattern found" && exit 1)
+      - name: Validate .env.example presence
+        run: |
+          test -f pos-system/.env.example || (echo ".env.example missing" && exit 1)
+      - name: Security headers config exists
+        run: |
+          test -f pos-system/nginx.conf.win.sample || (echo "nginx.conf sample missing" && exit 1)

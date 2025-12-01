@@ -1,0 +1,56 @@
+name: Build Release Artifacts
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-artifacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: release-artifacts-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install backend deps
+        working-directory: pos-system/backend
+        run: npm ci
+
+      - name: Build backend
+        working-directory: pos-system/backend
+        run: npm run build
+
+      - name: Install frontend deps
+        working-directory: pos-system/frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: pos-system/frontend
+        run: npm run build
+
+      - name: Upload backend dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-dist
+          path: |
+            pos-system/backend/dist/**
+          if-no-files-found: warn
+
+      - name: Upload frontend dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: |
+            pos-system/frontend/dist/**
+          if-no-files-found: warn

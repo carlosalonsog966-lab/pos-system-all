@@ -1,0 +1,46 @@
+# Node
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+build/
+**/build/
+
+# Logs and captures
+logs/
+**/logs/
+captures/
+**/captures/
+
+# Environments and temp
+.env
+.env.*
+.tmp/
+tmp/
+**/.tmp/
+**/tmp/
+
+# Database and uploads
+data/
+**/data/
+**/*.sqlite
+uploads/
+**/uploads/
+
+# Certificates
+certs/*.pfx
+**/*.pfx
+
+# Tauri / Rust targets and bundles
+src-tauri/target/
+src-tauri/**/target/
+src-tauri/**/bundle/
+
+# Backend build outputs
+backend/dist/
+
+# IDE/OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

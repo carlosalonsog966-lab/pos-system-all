@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard API — Endpoints y Contratos</title>
+    <style>
+      :root { color-scheme: light dark; --ok:#16a34a; --err:#dc2626; --muted:#64748b; }
+      body { margin: 0; padding: 24px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", Arial; line-height: 1.5; }
+      header { display:flex; align-items:baseline; gap:16px; }
+      header h1 { margin:0; font-size: 20px; }
+      nav { margin-left:auto; display:flex; gap:12px; }
+      .note { margin-top:16px; font-size:12px; color:var(--muted); }
+      a { color:#60a5fa; text-decoration:none; }
+      a:hover { text-decoration:underline; }
+      .grid { display:grid; grid-template-columns: repeat(4, minmax(180px,1fr)); gap:12px; margin-top:16px; }
+      .card { border:1px solid #334155; border-radius:8px; padding:12px; }
+      .kpi { font-size:13px; color:var(--muted); }
+      .value { font-size:24px; font-weight:600; }
+      .status { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border:1px solid #334155; border-radius:999px; }
+      .dot { width:10px; height:10px; border-radius:999px; }
+      .dot.ok { background: var(--ok); }
+      .dot.err { background: var(--err); }
+      .methods { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+      .badge { border:1px solid #334155; border-radius:999px; padding:4px 8px; font-size:12px; }
+      .section { margin-top:24px; }
+      .links { display:flex; gap:8px; flex-wrap:wrap; }
+      .download-list { display:grid; grid-template-columns: repeat(2, minmax(220px,1fr)); gap:8px; }
+      .dl-item { display:flex; align-items:center; justify-content:space-between; border:1px solid #334155; border-radius:8px; padding:8px 10px; }
+      .dl-status { display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--muted); }
+      .dl-status .dot { width:8px; height:8px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Dashboard API — Endpoints y Contratos</h1>
+      <nav>
+        <a href="endpoints.html" target="_blank">Índice de endpoints</a>
+        <a href="contracts.html" target="_blank">Reporte de contratos</a>
+        <a href="endpoints.yaml" target="_blank">YAML</a>
+        <a href="endpoints.csv" target="_blank">CSV</a>
+        <a href="endpoints.jsonl" target="_blank">JSONL</a>
+      </nav>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <div class="kpi">Total de endpoints</div>
+        <div class="value" id="totalEndpoints">—</div>
+      </div>
+      <div class="card">
+        <div class="kpi">Contratos alineados</div>
+        <div class="value" id="contractsAligned">—</div>
+        <div class="status" style="margin-top:8px;">
+          <div class="dot" id="contractsDot"></div>
+          <span id="contractsText">—</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="kpi">Faltantes en contratos</div>
+        <div class="value" id="missingCount">—</div>
+      </div>
+      <div class="card">
+        <div class="kpi">Extras en contratos</div>
+        <div class="value" id="extraCount">—</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="kpi">Distribución por método</div>
+      <div class="methods" id="methods"></div>
+    </div>
+
+    <div class="section" data-testid="quick-links">
+      <div class="kpi">Accesos directos</div>
+      <div class="links">
+        <a href="endpoints.html#GET" target="_blank" data-testid="ql-get">Filtrar GET</a>
+        <a href="endpoints.html#POST" target="_blank" data-testid="ql-post">Filtrar POST</a>
+        <a href="endpoints.html#PUT" target="_blank" data-testid="ql-put">Filtrar PUT</a>
+        <a href="endpoints.html#PATCH" target="_blank" data-testid="ql-patch">Filtrar PATCH</a>
+        <a href="endpoints.html#DELETE" target="_blank" data-testid="ql-delete">Filtrar DELETE</a>
+        <a href="endpoints.html#method=GET&q=clientes" target="_blank" data-testid="ql-get-clientes">GET con texto “clientes”</a>
+      </div>
+    </div>
+
+    <div class="section" data-testid="downloads-quick">
+      <div class="kpi">Descargas rápidas</div>
+      <div class="download-list" id="downloads"></div>
+      <div class="note">Tip: en CI descarga el artefacto <code>status-dashboard</code>, descomprime y abre <code>index.html</code>.</div>
+    </div>
+
+    <div class="section" data-testid="contracts-section">
+      <div class="kpi">Contratos y diffs</div>
+      <div class="links">
+        <a href="contracts.html" target="_blank" data-testid="btn-contracts-report">Abrir reporte de contratos</a>
+        <a href="contracts-diff.html" target="_blank" data-testid="btn-contracts-diff">Abrir diff de contratos</a>
+      </div>
+      <div class="note">Si algún enlace no está disponible, verifica que el job de CI haya publicado los artefactos de contratos.</div>
+    </div>
+
+    <div class="section" data-testid="health-section">
+      <div class="kpi">Salud reciente</div>
+      <div class="links">
+        <a href="../../playwright-report/index.html" target="_blank" data-testid="link-playwright-report">Reporte de Playwright</a>
+        <a href="../../launcher/health-e2e.js" target="_blank" data-testid="link-health-e2e">Script E2E de Salud</a>
+      </div>
+      <div class="note">Estos enlaces pueden requerir abrirlos desde el repositorio local o el artefacto correspondiente.</div>
+    </div>
+
+    <script>
+      async function loadEndpoints() {
+        const candidates = [ '../endpoints.jsonl', 'endpoints.jsonl' ];
+        let lastErr = null;
+        for (const url of candidates) {
+          try {
+            const res = await fetch(url, { cache: 'no-store' });
+            if (!res.ok) { lastErr = new Error('HTTP ' + res.status + ' para ' + url); continue; }
+            const txt = await res.text();
+            return txt.trim().split(/\r?\n/).filter(Boolean).map(line => { try { return JSON.parse(line); } catch { return null; } }).filter(Boolean);
+          } catch (e) { lastErr = e; }
+        }
+        throw new Error('No se pudo cargar endpoints: ' + (lastErr?.message || 'desconocido'));
+      }
+
+      async function loadContractsReport() {
+        const candidates = [ 'contracts-report.json', '../test/contracts-report.json' ];
+        let lastErr = null;
+        for (const url of candidates) {
+          try {
+            const res = await fetch(url, { cache: 'no-store' });
+            if (res.ok) return res.json();
+            lastErr = new Error('HTTP ' + res.status + ' para ' + url);
+          } catch (e) { lastErr = e; }
+        }
+        throw new Error('No se pudo cargar el reporte de contratos: ' + (lastErr?.message || 'desconocido'));
+      }
+
+      function renderMethods(items) {
+        const methodsDiv = document.getElementById('methods');
+        methodsDiv.innerHTML = '';
+        const counts = { GET:0, POST:0, PUT:0, PATCH:0, DELETE:0 };
+        for (const it of items) {
+          const m = String((it.method||'').toUpperCase());
+          if (counts[m] !== undefined) counts[m]++;
+        }
+        Object.entries(counts).forEach(([m,c]) => {
+          const span = document.createElement('span');
+          span.className = 'badge';
+          span.textContent = m + ': ' + c;
+          methodsDiv.appendChild(span);
+        });
+      }
+
+      async function renderDownloads() {
+        const container = document.getElementById('downloads');
+        const items = [
+          { href: 'endpoints.html', label: 'Índice de endpoints' },
+          { href: 'endpoints.yaml', label: 'YAML' },
+          { href: 'endpoints.csv', label: 'CSV' },
+          { href: 'endpoints.jsonl', label: 'JSONL' },
+          { href: 'contracts.html', label: 'Reporte de contratos' },
+          { href: 'contracts-diff.html', label: 'Diff de contratos' }
+        ];
+        container.innerHTML = '';
+        const checks = await Promise.all(items.map(async (it) => {
+          try {
+            const res = await fetch(it.href, { cache: 'no-store' });
+            return { ...it, ok: res.ok };
+          } catch {
+            return { ...it, ok: false };
+          }
+        }));
+        for (const it of checks) {
+          const row = document.createElement('div');
+          row.className = 'dl-item';
+          const link = document.createElement('a');
+          link.href = it.href;
+          link.target = '_blank';
+          link.textContent = it.label;
+          link.setAttribute('data-testid', `dl-${it.label.toLowerCase().replace(/\s+/g,'-')}`);
+          const status = document.createElement('span');
+          status.className = 'dl-status';
+          const dot = document.createElement('span');
+          dot.className = 'dot ' + (it.ok ? 'ok' : 'err');
+          const text = document.createElement('span');
+          text.textContent = it.ok ? 'Disponible' : 'No disponible';
+          status.appendChild(dot);
+          status.appendChild(text);
+          row.appendChild(link);
+          row.appendChild(status);
+          container.appendChild(row);
+        }
+      }
+
+      (async () => {
+        let endpoints = null;
+        try {
+          endpoints = await loadEndpoints();
+          document.getElementById('totalEndpoints').textContent = String(endpoints.length);
+          renderMethods(endpoints);
+        } catch (err) {
+          console.warn('Endpoints no disponibles en este servidor:', err?.message || err);
+          document.getElementById('totalEndpoints').textContent = '—';
+        }
+
+        try {
+          const report = await loadContractsReport();
+          const s = report.summary || {};
+          const missing = s.missingInContractsCount ?? (report.missingInContracts?.length || 0);
+          const extra = s.extraInContractsCount ?? (report.extraInContracts?.length || 0);
+          const backend = s.backendRoutesCount ?? (endpoints ? endpoints.length : 0);
+          const contracts = s.contractRoutesCount ?? (endpoints ? endpoints.length : 0);
+          const aligned = (missing === 0 && extra === 0 && backend === contracts && backend > 0);
+
+          document.getElementById('missingCount').textContent = String(missing);
+          document.getElementById('extraCount').textContent = String(extra);
+          document.getElementById('contractsAligned').textContent = aligned ? 'Sí' : 'No';
+          document.getElementById('contractsDot').className = 'dot ' + (aligned ? 'ok' : 'err');
+          document.getElementById('contractsText').textContent = aligned ? 'Contratos alineados' : 'Desalineación detectada';
+        } catch (err) {
+          console.error('Error cargando el reporte de contratos:', err);
+          document.getElementById('contractsText').textContent = 'Error cargando datos';
+          document.getElementById('contractsDot').className = 'dot err';
+        }
+
+        // Render de descargas rápidas
+        try { await renderDownloads(); } catch {}
+      })();
+    </script>
+  </body>
+</html>

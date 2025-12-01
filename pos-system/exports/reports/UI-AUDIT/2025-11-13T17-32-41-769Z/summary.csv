@@ -1,0 +1,2 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/cash-register","cash-register-open-button","activate","{""ui"":[""toast"",""domChanged""],""network"":[{""method"":""POST"",""endpoint"":""/cash-register/open""}]}","","","","","","","","FAIL","control no encontrado"

@@ -1,0 +1,52 @@
+version: '3.9'
+services:
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pos_system
+    ports: [ "3307:3306" ]
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost","-proot"]
+      interval: 5s
+      timeout: 2s
+      retries: 30
+  app:
+    build: .
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: root
+      DB_NAME: pos_system
+      NODE_ENV: test
+      SAFE_MODE: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+version: '3.9'
+services:
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pos_system
+    ports: [ "3307:3306" ]
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost","-proot"]
+      interval: 5s
+      timeout: 2s
+      retries: 30
+  app:
+    build: .
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: root
+      DB_NAME: pos_system
+      NODE_ENV: test
+      SAFE_MODE: "true"
+    depends_on:
+      db:
+        condition: service_healthy

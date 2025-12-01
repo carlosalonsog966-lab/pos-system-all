@@ -1,0 +1,6 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/sales","sales-process-payment-button","activate","{""ui"":[""modalChanged""],""network"":[]}","","","","","","","","FAIL","excepción: page.fill: Test timeout of 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('#username')[22m
+[2m    - locator resolved to <input value="""" type=""text"" required="""" id=""username"" name=""username"" class=""input-field"" aria-invalid=""false"" autocomplete=""username"" placeholder=""Ingresa tu usuario""/>[22m
+"

@@ -1,0 +1,5 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/inventory","transfer-receive-button","activate","{""ui"":[""toast"",""domChanged""],""network"":[{""method"":""POST"",""endpoint"":""/inventory/transfer/:id/receive""}]}","","","","","","","","FAIL","excepción: page.fill: Test timeout of 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('#username')[22m
+"

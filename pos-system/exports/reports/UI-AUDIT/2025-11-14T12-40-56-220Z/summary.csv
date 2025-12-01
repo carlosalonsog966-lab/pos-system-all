@@ -1,0 +1,2 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/reports","reports-export-pdf-button","activate","{""ui"":[""domChanged""],""network"":[{""method"":""GET"",""endpoint"":""/reports/inventory""}]}","","","","","","","","FAIL","excepción: Login failed - still on login page"

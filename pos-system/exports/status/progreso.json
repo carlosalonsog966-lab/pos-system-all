@@ -1,0 +1,27 @@
+{
+  "generatedAt": "2025-11-12T14:56:26.579Z",
+  "releaseTargets": {
+    "RC": "2025-12-01",
+    "GA": "2025-12-19T20:00:00"
+  },
+  "readinessScore": 100,
+  "signals": {
+    "ciReady": true,
+    "ciWorkflowsCount": 10,
+    "qaReady": true,
+    "e2eReportExists": true,
+    "testsLastRunPathExists": true,
+    "endpointsReady": true,
+    "dockerReady": true,
+    "tauriReady": true,
+    "observabilidadReady": true,
+    "docsReady": true
+  },
+  "testsInfo": {
+    "startedAt": null,
+    "finishedAt": null,
+    "passed": null,
+    "failed": null,
+    "total": null
+  }
+}

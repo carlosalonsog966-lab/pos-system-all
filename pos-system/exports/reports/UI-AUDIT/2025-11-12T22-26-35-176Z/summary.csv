@@ -1,0 +1,2 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/settings","config.save","activate","{""ui"":[""toast"",""reloadPersist""]}","","","","","","","","FAIL","{""networkHit"":false,""domChanged"":false,""routeChanged"":false,""modalChanged"":false,""toast"":false,""consoleErrors"":0,""pageErrors"":0}"

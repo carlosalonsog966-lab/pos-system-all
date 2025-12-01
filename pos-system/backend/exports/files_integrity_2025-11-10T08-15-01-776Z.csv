@@ -1,0 +1,4 @@
+id,filename,path,exists,checksumDb,checksumActual,match,entityType,entityId,createdAt
+be87d96a-8a9e-402e-8bb3-9f473c4fbed1,"tmp-avatar.png","files/1762749948042-37d65f3a777ca-tmp-avatar.png",true,8d6a5297038c59e6e1243a7f7614a6bee5ef2d3525775761dacbfde3f39bd4db,8d6a5297038c59e6e1243a7f7614a6bee5ef2d3525775761dacbfde3f39bd4db,true,,,2025-11-10T04:45:48.045Z
+8ea68f3b-15c7-492f-98c2-5afa4535218b,"audit-sample.txt","files/1762611345056-743f9cc36672c-audit-sample.txt",true,2d4759107dd5a7d4e25a36099a858ad9340365dfdecdffa572b6a10b08f9efa4,2d4759107dd5a7d4e25a36099a858ad9340365dfdecdffa572b6a10b08f9efa4,true,test,TEST-ENTITY,2025-11-08T14:15:45.058Z
+a6760d40-4b0a-4c8e-8aef-cedb21158909,"sample-verify.txt","files/1762576505715-a222f1f12c1a4-sample-verify.txt",true,5a19c6d99ac6ce7a1de1b062bf1e6157cfd918aff3f7043a185c4a48dd370a76,5a19c6d99ac6ce7a1de1b062bf1e6157cfd918aff3f7043a185c4a48dd370a76,true,verification,script,2025-11-08T04:35:05.716Z

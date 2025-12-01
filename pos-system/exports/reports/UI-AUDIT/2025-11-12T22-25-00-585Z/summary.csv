@@ -1,0 +1,2 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/rankings","rankings.export","activate","{""ui"":[""toast""]}","","","","","","","","FAIL","{""networkHit"":false,""domChanged"":false,""routeChanged"":false,""modalChanged"":false,""toast"":false,""consoleErrors"":0,""pageErrors"":0}"

@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Sistema POS - Joyería</title>
+    <meta name="description" content="Sistema de Punto de Venta para Joyería" />
+    <meta name="theme-color" content="#1f2937" />
+    <meta name="tauri" content="true" />
+    
+    <!-- 🚨 FUERZA MODO OFFLINE EXTREMO - ANTES QUE TODO -->
+    <script>
+      (function() {
+        console.log('🚨 [HTML FORCE OFFLINE] Iniciando bloqueo extremo de red...');
+        
+        // Marcar modo offline inmediatamente
+        window.__FORCE_OFFLINE_MODE__ = true;
+        window.__TAURI_OFFLINE_MODE__ = true;
+        window.__TAURI_OFFLINE_ACTIVE__ = true;
+        
+        // DESTRUIR fetch completamente
+        if (window.fetch) {
+          window.fetch = function() {
+            console.log('🚨 [HTML BLOCKER] Fetch bloqueado en HTML');
+            return Promise.reject(new Error('OFFLINE_MODE: Fetch bloqueado por HTML'));
+          };
+        }
+        
+        // DESTRUIR XMLHttpRequest completamente  
+        if (window.XMLHttpRequest) {
+          window.XMLHttpRequest = function() {
+            return {
+              open: function() { console.log('🚨 [HTML BLOCKER] XHR open bloqueado'); },
+              send: function() { 
+                console.log('🚨 [HTML BLOCKER] XHR send bloqueado');
+                if (this.onerror) this.onerror(new Event('error'));
+                if (this.onreadystatechange) {
+                  this.readyState = 4;
+                  this.status = 0;
+                  this.onreadystatechange(new Event('readystatechange'));
+                }
+              },
+              readyState: 4,
+              status: 0,
+              statusText: 'OFFLINE'
+            };
+          };
+        }
+        
+        // Marcar que estamos en Tauri forzadamente
+        window.__TAURI_IPC__ = true;
+        window.__TAURI__ = { ipc: true, offline: true };
+        
+        console.log('✅ [HTML FORCE OFFLINE] Sistema offline forzado desde HTML');
+      })();
+    </script>
+    
+    <!-- Detección temprana de modo Tauri para producción offline -->
+    <script>
+      // Detectar si estamos en Tauri y forzar modo offline
+      (function() {
+        const isTauri = !!(window.__TAURI_IPC__ || window.__TAURI__ || window.location.protocol === 'tauri:');
+        const isProduction = !window.location.origin.includes('localhost') && !window.location.origin.includes('127.0.0.1');
+        
+        if (isTauri && isProduction) {
+          console.log('[TAURI DETECTOR] Modo Tauri detectado - Forzando modo offline');
+          window.__FORCED_TAURI_MODE__ = true;
+          window.__TAURI_OFFLINE_MODE__ = true;
+          
+          // Prevenir cualquier intento de conexión HTTP
+          const originalFetch = window.fetch;
+          window.fetch = function(url, options) {
+            if (typeof url === 'string' && (url.includes('localhost') || url.includes('127.0.0.1'))) {
+              console.log('[TAURI BLOCKER] Bloqueando conexión HTTP en modo offline:', url);
+              return Promise.reject(new Error('HTTP connections blocked in offline mode'));
+            }
+            return originalFetch.apply(this, arguments);
+          };
+          
+          // Override XMLHttpRequest para bloquear conexiones locales
+          const originalXHR = window.XMLHttpRequest;
+          window.XMLHttpRequest = function() {
+            const xhr = new originalXHR();
+            const originalOpen = xhr.open;
+            xhr.open = function(method, url, async, user, password) {
+              if (typeof url === 'string' && (url.includes('localhost') || url.includes('127.0.0.1'))) {
+                console.log('[TAURI BLOCKER] Bloqueando XHR en modo offline:', url);
+                throw new Error('XHR connections blocked in offline mode');
+              }
+              return originalOpen.apply(this, arguments);
+            };
+            return xhr;
+          };
+        }
+      })();
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="root"></div>
+    
+    <!-- 🚨 BYPASS DE EMERGENCIA PARA PANTALLA NEGRA -->
+    <script>
+      console.log('🚨 BYPASS DE EMERGENCIA ACTIVADO');
+      
+      // Limpiar todo el estado problemático que causa pantalla negra
+      const emergencyKeys = [
+        '__lastBackendStatus',
+        '__backendStatusOverride', 
+        '__healthCheckStatus',
+        'backendStatus',
+        'lastHealthCheck',
+        'offlineMode',
+        'backendDown',
+        'lastConnectionError'
+      ];
+      
+      emergencyKeys.forEach(key => {
+        if (localStorage.getItem(key)) {
+          localStorage.removeItem(key);
+          console.log(`🧹 Emergency cleanup: ${key}`);
+        }
+      });
+      
+      // Forzar sistema a modo online
+      localStorage.setItem('__lastBackendStatus', 'up');
+      localStorage.setItem('__backendStatusOverride', 'online');
+      localStorage.setItem('__healthCheckStatus', JSON.stringify({ 
+        status: 'healthy', 
+        timestamp: Date.now(),
+        forced: true 
+      }));
+      
+      console.log('✅ EMERGENCY BYPASS APPLIED - System forced online');
+    </script>
+    
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

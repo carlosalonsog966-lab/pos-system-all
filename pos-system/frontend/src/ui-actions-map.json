@@ -1,0 +1,77 @@
+{
+  "routes": [
+    {
+      "route": "/sales",
+      "controls": [
+        { "testId": "sales-add-to-cart-button", "expected": { "ui": ["toast"], "network": [{ "method": "POST", "endpoint": "/sales/items" }] } },
+        { "testId": "sales-process-payment-button", "expected": { "ui": ["modalChanged"], "network": [] } },
+        { "testId": "sales-complete-sale-button", "expected": { "ui": ["toast", "routeChanged"], "network": [{ "method": "POST", "endpoint": "/sales" }], "persist": ["reloadPersist"] } },
+        { "testId": "sales-print-ticket-button", "expected": { "ui": ["domChanged"], "network": [{ "method": "GET", "endpoint": "/tickets/generate/:id" }] } },
+        { "testId": "sales-search-input", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "sales-scan-button", "expected": { "ui": ["toast"], "network": [] } },
+        { "testId": "sales-category-filter", "expected": { "ui": ["domChanged"], "network": [] } }
+      ]
+    },
+    {
+      "route": "/cash-register",
+      "controls": [
+        { "testId": "cash-register-open-button", "expected": { "ui": ["toast", "domChanged"], "network": [{ "method": "POST", "endpoint": "/cash-register/open" }] } },
+        { "testId": "cash-register-close-button", "expected": { "ui": ["toast", "domChanged"], "network": [{ "method": "POST", "endpoint": "/cash-register/close/:id" }], "persist": ["reloadPersist"] } }
+      ]
+    },
+    {
+      "route": "/inventory",
+      "controls": [
+        { "testId": "inventory-search-input", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "inventory-summary-tab", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "inventory-transfer-tab", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "inventory-count-tab", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "inventory-rfid-tab", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "transfer-product-id-input", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "transfer-quantity-input", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "transfer-from-branch-input", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "transfer-to-branch-input", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "transfer-reason-input", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "transfer-submit-button", "expected": { "ui": ["toast", "domChanged"], "network": [{ "method": "POST", "endpoint": "/inventory/transfer" }] } },
+        { "testId": "transfer-ship-button", "expected": { "ui": ["toast", "domChanged"], "network": [{ "method": "POST", "endpoint": "/inventory/transfer/:id/ship" }] } },
+        { "testId": "transfer-receive-button", "expected": { "ui": ["toast", "domChanged"], "network": [{ "method": "POST", "endpoint": "/inventory/transfer/:id/receive" }] } },
+        { "testId": "cycle-count-create-button", "expected": { "ui": ["toast", "domChanged"], "network": [{ "method": "POST", "endpoint": "/inventory/cycle-counts" }] } },
+        { "testId": "cycle-count-apply-button", "expected": { "ui": ["toast", "domChanged"], "network": [{ "method": "POST", "endpoint": "/inventory/cycle-counts/:id/apply" }] } }
+      ]
+    },
+    {
+      "route": "/clients",
+      "controls": [
+        { "testId": "clients-search-input", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "clients-create-button", "expected": { "ui": ["modalChanged"], "network": [] } },
+        { "testId": "clients-edit-button", "expected": { "ui": ["modalChanged"], "network": [] } },
+        { "testId": "clients-delete-button", "expected": { "ui": ["toast", "domChanged"], "network": [{ "method": "DELETE", "endpoint": "/clients/:id" }] } },
+        { "testId": "clients-export-button", "expected": { "ui": ["toast"], "network": [] } },
+        { "testId": "clients-filters-button", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "clients-view-table-button", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "clients-view-grid-button", "expected": { "ui": ["domChanged"], "network": [] } },
+        { "testId": "clients-view-history-button", "expected": { "ui": ["domChanged"], "network": [] } }
+      ]
+    },
+    {
+      "route": "/reports",
+      "controls": [
+        { "testId": "reports-export-pdf-button", "expected": { "ui": ["domChanged"], "network": [{ "method": "GET", "endpoint": "/reports/inventory" }] } }
+      ]
+    },
+    {
+      "route": "/backup",
+      "controls": [
+        { "testId": "backup-create-button", "expected": { "ui": ["toast", "domChanged"], "network": [{ "method": "POST", "endpoint": "/backup/create" }], "persist": ["reloadPersist"] } }
+      ]
+    },
+    {
+      "route": "/jobs",
+      "controls": [
+        { "testId": "jobs-run-price-update-button", "expected": { "ui": ["toast", "domChanged"], "network": [{ "method": "POST", "endpoint": "/jobs/echo" }] } }
+      ]
+    }
+  ],
+  "ui.toast": { "route": "*", "expected": { "ui": ["toast"], "network": [] } }
+}
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Configuration Test</h1>
+    <div id="results"></div>
+    <script>
+        // Test API endpoints
+        async function testApi() {
+            const results = document.getElementById('results');
+            
+            try {
+                // Test health endpoint
+                const healthResp = await fetch('/api/health');
+                const healthData = await healthResp.json();
+                results.innerHTML += `<p>Health: ${JSON.stringify(healthData)}</p>`;
+                
+                // Test login
+                const loginResp = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin', password: 'admin123' })
+                });
+                const loginData = await loginResp.json();
+                results.innerHTML += `<p>Login: ${JSON.stringify(loginData)}</p>`;
+                
+                // Test products with token
+                if (loginData.success) {
+                    const productsResp = await fetch('/api/products', {
+                        headers: { 'Authorization': `Bearer ${loginData.data.token}` }
+                    });
+                    const productsData = await productsResp.json();
+                    results.innerHTML += `<p>Products: ${JSON.stringify(productsData)}</p>`;
+                }
+                
+            } catch (error) {
+                results.innerHTML += `<p>Error: ${error.message}</p>`;
+            }
+        }
+        
+        testApi();
+    </script>
+</body>
+</html>

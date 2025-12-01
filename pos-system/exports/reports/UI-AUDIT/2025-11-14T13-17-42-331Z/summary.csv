@@ -1,0 +1,5 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/cash-register","cash-register-open-button","activate","{""ui"":[""toast"",""domChanged""],""network"":[{""method"":""POST"",""endpoint"":""/cash-register/open""}]}","","","","","","","","FAIL","excepción: page.click: Test timeout of 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('button[type=""submit""]')[22m
+"

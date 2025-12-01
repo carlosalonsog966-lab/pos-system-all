@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  package-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Prepare artifacts
+        run: |
+          mkdir -p pos-system/exports/installer
+          mkdir -p pos-system/exports/reports
+          find pos-system/exports -type f -exec sha256sum {} \; > pos-system/exports/reports/checksums.sha256 || true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pos-system-artifacts
+          path: |
+            pos-system/exports/installer/**
+            pos-system/exports/reports/**
+
+      - name: Generate CHANGELOG
+        working-directory: pos-system
+        run: |
+          echo "\n## Release $(date -u)" >> CHANGELOG.md
+          echo "Artefactos y hashes adjuntos." >> CHANGELOG.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            pos-system/exports/installer/**
+            pos-system/exports/reports/**
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

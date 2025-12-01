@@ -1,0 +1,2 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/inventory","inventory-rfid-tab","activate","{""ui"":[""domChanged""],""network"":[]}","","","","","","","","FAIL","excepción: Login failed - still on login page"

@@ -1,0 +1,38 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "[husky] Ejecutando pre-push: lint, build y tests en paquetes"
+
+set -e
+echo "[husky] Backend: lint/build/test"
+npm --prefix pos-system/backend run lint || exit 1
+npm --prefix pos-system/backend run build || exit 1
+npm --prefix pos-system/backend test || exit 1
+
+echo "[husky] Frontend: lint/build/test"
+npm --prefix pos-system/frontend run lint || exit 1
+npm --prefix pos-system/frontend run build || exit 1
+npm --prefix pos-system/frontend test || exit 1
+
+# Backend
+echo "[husky] Backend: lint + unit tests + build"
+cd "pos-system/backend"
+npm run lint
+npm run test:unit
+npm run build
+
+# Frontend
+echo "[husky] Frontend: lint + tests + build"
+cd ../frontend
+npm run lint
+npm run test
+npm run build:fast
+
+# Opcional: Smoke Health rápido antes de push (activar con HUSKY_SMOKE=1)
+cd ..
+if [ "$HUSKY_SMOKE" = "1" ]; then
+  echo "[husky] Smoke Health: ejecución rápida (once)"
+  npm run smoke:health:once
+fi
+
+echo "[husky] OK"

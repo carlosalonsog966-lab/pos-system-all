@@ -1,0 +1,30 @@
+name: Progreso
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  calcular-progreso:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Generar progreso
+        working-directory: pos-system
+        run: node scripts/progreso.js
+
+      - name: Upload progreso
+        uses: actions/upload-artifact@v4
+        with:
+          name: progreso
+          path: |
+            pos-system/exports/status/**
+

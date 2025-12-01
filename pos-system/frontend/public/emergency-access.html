@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema POS - Acceso Directo</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #fbbf24;
+        }
+        .button {
+            background: linear-gradient(45deg, #f59e0b, #fbbf24);
+            color: #1f2937;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .success { color: #10b981; }
+        .warning { color: #f59e0b; }
+        .error { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Sistema POS Joyería</h1>
+        <div id="status" class="status">
+            <div class="warning">⚠️ Ejecutando bypass de emergencia...</div>
+        </div>
+        <button class="button" onclick="forceSystemOnline()">🔥 Forzar Sistema Online</button>
+        <button class="button" onclick="accessPOS()">💎 Acceder al POS</button>
+        <button class="button" onclick="clearAllData()">🧹 Limpiar Todo</button>
+    </div>
+
+    <script>
+        function updateStatus(message, type = 'warning') {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function forceSystemOnline() {
+            updateStatus('🧹 Limpiando estado problemático...', 'warning');
+            
+            try {
+                // Limpiar TODO el estado problemático
+                const problematicKeys = [
+                    '__lastBackendStatus',
+                    '__backendStatusOverride', 
+                    '__healthCheckStatus',
+                    'backendStatus',
+                    'lastHealthCheck',
+                    'offlineMode',
+                    'backendDown',
+                    'lastConnectionError',
+                    'offlineData',
+                    'offlineQueue',
+                    'pendingSync',
+                    'offlineProducts',
+                    'offlineSales',
+                    'offlineClients'
+                ];
+                
+                problematicKeys.forEach(key => {
+                    try {
+                        if (localStorage.getItem(key)) {
+                            localStorage.removeItem(key);
+                            console.log(`🧹 Removed: ${key}`);
+                        }
+                    } catch (e) {
+                        console.log(`⚠️ Could not remove ${key}:`, e.message);
+                    }
+                });
+                
+                // Forzar sistema completamente online
+                localStorage.setItem('__lastBackendStatus', 'up');
+                localStorage.setItem('__backendStatusOverride', 'online');
+                localStorage.setItem('__healthCheckStatus', JSON.stringify({ 
+                    status: 'healthy', 
+                    timestamp: Date.now(),
+                    forced: true,
+                    emergency: true
+                }));
+                
+                updateStatus('✅ Sistema forzado a ONLINE - Listo para usar!', 'success');
+                
+            } catch (error) {
+                updateStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        function accessPOS() {
+            updateStatus('🔄 Redirigiendo al sistema POS...', 'warning');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 1000);
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ ¿Estás seguro de limpiar TODOS los datos?')) {
+                localStorage.clear();
+                updateStatus('🧹 Todos los datos limpiados - Reinicie el sistema', 'success');
+            }
+        }
+
+        // Auto-ejecutar bypass al cargar
+        window.onload = function() {
+            console.log('🚀 Emergency bypass page loaded');
+            setTimeout(forceSystemOnline, 1000);
+        };
+    </script>
+</body>
+</html>

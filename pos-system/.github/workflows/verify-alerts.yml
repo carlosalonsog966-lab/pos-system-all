@@ -1,0 +1,104 @@
+name: Verify Alerts CI
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '15 6 * * *'
+
+concurrency:
+  group: verify-alerts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-alerts:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        include:
+          - name: local
+            env_label: CI-local
+            pos_base_url: http://localhost:5656
+
+    env:
+      POS_BASE_URL: ${{ matrix.pos_base_url }}
+      VERIFY_ENV_LABEL: ${{ matrix.env_label }}
+      VERIFY_SLACK_WEBHOOK_URL: ${{ secrets.VERIFY_SLACK_WEBHOOK_URL }}
+      # Opcionales (puedes ajustarlos vía Secrets si quieres)
+      # VERIFY_ONLY_MISMATCHES: 'false'
+      # VERIFY_APPEND: 'false'
+      # VERIFY_OUTPUT_CSV_PATH: pos-system/exports/verification-report.csv
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install backend dependencies
+        working-directory: pos-system/backend
+        run: |
+          npm ci
+
+      - name: Build backend
+        working-directory: pos-system/backend
+        run: |
+          npm run build
+
+      - name: Start backend (background)
+        working-directory: pos-system/backend
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath 'npm' -ArgumentList 'start' -NoNewWindow -PassThru
+          "$($p.Id)" | Set-Content -Path "$env:RUNNER_TEMP\backend.pid"
+
+      - name: Wait for health
+        shell: pwsh
+        run: |
+          Write-Host "Esperando salud en $env:POS_BASE_URL/api/health"
+          $ok = $false
+          for ($i = 1; $i -le 30; $i++) {
+            try {
+              $resp = Invoke-WebRequest "$env:POS_BASE_URL/api/health" -UseBasicParsing -TimeoutSec 4
+              if ($resp.StatusCode -ge 200 -and $resp.StatusCode -lt 300) { $ok = $true; break }
+            } catch {}
+            Write-Host "Intento $i..."; Start-Sleep -Seconds 2
+          }
+          if (-not $ok) { throw "Backend no saludable" }
+
+      - name: Run verify alerts once
+        run: |
+          node pos-system/launcher/file-verification-alerts.js --once || true
+
+      - name: List exports and logs
+        run: |
+          ls -la pos-system/exports || true
+          ls -la pos-system/logs || true
+
+      - name: Upload verification artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-alerts-artifacts
+          path: |
+            pos-system/exports/*.csv
+            pos-system/exports/*.json
+            pos-system/exports/*.pdf
+            pos-system/logs/verification-final.txt
+          if-no-files-found: warn
+
+      - name: Stop backend
+        if: always()
+        shell: pwsh
+        run: |
+          $pidPath = "$env:RUNNER_TEMP\backend.pid"
+          if (Test-Path $pidPath) {
+            $pid = Get-Content $pidPath | Select-Object -First 1
+            try { Stop-Process -Id $pid -Force } catch {}
+          }

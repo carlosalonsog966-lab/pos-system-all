@@ -1,0 +1,78 @@
+{
+  "version": "1.0",
+  "updatedAt": "2025-11-10T13:50:00.375Z",
+  "entries": [
+    {
+      "type": "chart",
+      "filename": "dashboard-chart-2025-11-10T13-29-57-865Z.png",
+      "urlPath": "/exports/charts/dashboard-chart-2025-11-10T13-29-57-865Z.png",
+      "relPath": "charts/dashboard-chart-2025-11-10T13-29-57-865Z.png",
+      "size": 59936,
+      "sha256": "9b3a563665e6110d5263a0f1dff989c837850f42fdaf8feaf978ce89c62df8a9",
+      "createdAt": "2025-11-10T13:29:58.164Z"
+    },
+    {
+      "type": "chart",
+      "filename": "sales-chart-2025-11-10T13-30-19-353Z.png",
+      "urlPath": "/exports/charts/sales-chart-2025-11-10T13-30-19-353Z.png",
+      "relPath": "charts/sales-chart-2025-11-10T13-30-19-353Z.png",
+      "size": 58609,
+      "sha256": "0979f65c5186e0afebdde579676ed1deee51ed45bb09c5ec1c208313bf557253",
+      "createdAt": "2025-11-10T13:30:19.654Z"
+    },
+    {
+      "type": "chart",
+      "filename": "inventory-chart-2025-11-10T13-30-40-849Z.png",
+      "urlPath": "/exports/charts/inventory-chart-2025-11-10T13-30-40-849Z.png",
+      "relPath": "charts/inventory-chart-2025-11-10T13-30-40-849Z.png",
+      "size": 60128,
+      "sha256": "c718370614045fc96044e45d73b11a2ee78bd2ca2b3458f4b71ab91d8b739c77",
+      "createdAt": "2025-11-10T13:30:41.128Z"
+    },
+    {
+      "type": "chart",
+      "filename": "financial-chart-2025-11-10T13-31-02-319Z.png",
+      "urlPath": "/exports/charts/financial-chart-2025-11-10T13-31-02-319Z.png",
+      "relPath": "charts/financial-chart-2025-11-10T13-31-02-319Z.png",
+      "size": 59210,
+      "sha256": "b95f6879120b43a4112d533120d7c0dc729a0c37e8ed5ddc919a6f6bf4d1bad8",
+      "createdAt": "2025-11-10T13:31:02.591Z"
+    },
+    {
+      "type": "chart",
+      "filename": "dashboard-chart-2025-11-10T13-48-54-874Z.png",
+      "urlPath": "/exports/charts/dashboard-chart-2025-11-10T13-48-54-874Z.png",
+      "relPath": "charts/dashboard-chart-2025-11-10T13-48-54-874Z.png",
+      "size": 59936,
+      "sha256": "9b3a563665e6110d5263a0f1dff989c837850f42fdaf8feaf978ce89c62df8a9",
+      "createdAt": "2025-11-10T13:48:55.227Z"
+    },
+    {
+      "type": "chart",
+      "filename": "sales-chart-2025-11-10T13-49-16-507Z.png",
+      "urlPath": "/exports/charts/sales-chart-2025-11-10T13-49-16-507Z.png",
+      "relPath": "charts/sales-chart-2025-11-10T13-49-16-507Z.png",
+      "size": 58609,
+      "sha256": "0979f65c5186e0afebdde579676ed1deee51ed45bb09c5ec1c208313bf557253",
+      "createdAt": "2025-11-10T13:49:16.964Z"
+    },
+    {
+      "type": "chart",
+      "filename": "inventory-chart-2025-11-10T13-49-38-232Z.png",
+      "urlPath": "/exports/charts/inventory-chart-2025-11-10T13-49-38-232Z.png",
+      "relPath": "charts/inventory-chart-2025-11-10T13-49-38-232Z.png",
+      "size": 60128,
+      "sha256": "c718370614045fc96044e45d73b11a2ee78bd2ca2b3458f4b71ab91d8b739c77",
+      "createdAt": "2025-11-10T13:49:38.627Z"
+    },
+    {
+      "type": "chart",
+      "filename": "financial-chart-2025-11-10T13-49-59-889Z.png",
+      "urlPath": "/exports/charts/financial-chart-2025-11-10T13-49-59-889Z.png",
+      "relPath": "charts/financial-chart-2025-11-10T13-49-59-889Z.png",
+      "size": 59210,
+      "sha256": "b95f6879120b43a4112d533120d7c0dc729a0c37e8ed5ddc919a6f6bf4d1bad8",
+      "createdAt": "2025-11-10T13:50:00.374Z"
+    }
+  ]
+}

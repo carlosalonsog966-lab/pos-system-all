@@ -1,0 +1,58 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "POS Backend API",
+    "version": "1.0.0",
+    "description": "Documentación inicial de endpoints clave del Backend POS."
+  },
+  "servers": [
+    { "url": "/api", "description": "Prefijo API" }
+  ],
+  "tags": [
+    { "name": "Observabilidad" },
+    { "name": "Jobs" }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Observabilidad"],
+        "summary": "Salud del servicio",
+        "responses": {
+          "200": { "description": "OK" }
+        }
+      }
+    },
+    "/meta/endpoints": {
+      "get": {
+        "tags": ["Observabilidad"],
+        "summary": "Listado de endpoints",
+        "parameters": [
+          { "name": "q", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Catálogo" } }
+      }
+    },
+    "/metrics/prom": {
+      "get": {
+        "tags": ["Observabilidad"],
+        "summary": "Métricas en formato Prometheus",
+        "responses": { "200": { "description": "Texto Prometheus" } }
+      }
+    },
+    "/jobs": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "Listar trabajos",
+        "responses": { "200": { "description": "Listado" } }
+      }
+    },
+    "/jobs/health": {
+      "get": {
+        "tags": ["Jobs"],
+        "summary": "Salud del worker",
+        "responses": { "200": { "description": "OK" } }
+      }
+    }
+  }
+}
+

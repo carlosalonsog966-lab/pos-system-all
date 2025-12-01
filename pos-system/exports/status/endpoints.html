@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Índice de Endpoints API</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #22c55e;
+      --method-get: #60a5fa;
+      --method-post: #34d399;
+      --method-put: #f59e0b;
+      --method-patch: #a78bfa;
+      --method-delete: #ef4444;
+    }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu; background: var(--bg); color: var(--text); }
+    header { padding: 16px 20px; border-bottom: 1px solid #1f2937; background: var(--panel); position: sticky; top:0; z-index:10; }
+    h1 { margin:0; font-size: 20px; }
+    .sub { color: var(--muted); font-size: 12px; }
+    .wrap { padding: 16px 20px; }
+    .grid { display: grid; grid-template-columns: 280px 1fr; gap: 16px; }
+    .card { background: var(--panel); border: 1px solid #1f2937; border-radius: 8px; padding: 12px; }
+    .controls { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    input, select { background: #0b1324; color: var(--text); border: 1px solid #1f2937; border-radius: 6px; padding: 8px; }
+    .stat { display: flex; align-items: center; justify-content: space-between; font-size: 14px; padding: 6px 8px; border-radius: 6px; }
+    .list { width: 100%; border-collapse: collapse; }
+    .list th, .list td { border-bottom: 1px solid #1f2937; padding: 8px; font-size: 13px; }
+    .list th { text-align: left; color: var(--muted); }
+    .method { font-weight: 600; padding: 2px 6px; border-radius: 4px; display: inline-block; }
+    .GET { background: #0b2545; color: var(--method-get); }
+    .POST { background: #0b2d1a; color: var(--method-post); }
+    .PUT { background: #381a00; color: var(--method-put); }
+    .PATCH { background: #2a1b53; color: var(--method-patch); }
+    .DELETE { background: #3b0d0d; color: var(--method-delete); }
+    .muted { color: var(--muted); }
+    footer { padding: 12px 20px; color: var(--muted); font-size: 12px; }
+    .group-item { display: flex; justify-content: space-between; padding: 6px 8px; border-radius: 6px; }
+    .group-item:hover { background: #0b1324; }
+    .badge { background: #0b1324; border: 1px solid #1f2937; border-radius: 999px; padding: 2px 8px; font-size: 12px; }
+    .btn { background: #111827; border: 1px solid #1f2937; color: var(--text); border-radius: 6px; padding: 8px; cursor: pointer; }
+    .btn:hover { background: #0b1324; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Índice de Endpoints API</h1>
+    <div class="sub">Fuente: ./endpoints.jsonl — generado por compare-contracts</div>
+  </header>
+
+  <div class="wrap">
+    <div class="controls card" id="controls">
+      <input id="q" type="text" placeholder="Filtrar por texto (método o ruta)" />
+      <select id="module">
+        <option value="">Todos los módulos</option>
+      </select>
+      <select id="method">
+        <option value="">Todos los métodos</option>
+        <option>GET</option>
+        <option>POST</option>
+        <option>PUT</option>
+        <option>PATCH</option>
+        <option>DELETE</option>
+      </select>
+      <button class="btn" id="copyLink">Copiar enlace</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3 style="margin:0 0 8px 0">Resumen</h3>
+        <div id="summary"></div>
+        <h3 style="margin:12px 0 8px 0">Módulos</h3>
+        <div id="groups"></div>
+      </div>
+      <div class="card">
+        <table class="list" id="table">
+          <thead>
+            <tr>
+              <th style="width:120px">Método</th>
+              <th>Ruta</th>
+              <th style="width:160px" class="muted">Módulo</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Generado dinámicamente desde <code>exports/endpoints.jsonl</code>. Última carga: <span id="stamp"></span>.
+  </footer>
+
+  <script src="./js/url-utils.js"></script>
+  <script>
+    async function loadJSONL(url) {
+      const res = await fetch(url, { cache: 'no-store' });
+      const text = await res.text();
+      return text.split(/\r?\n/).filter(l => l.trim().length > 0).map(l => {
+        try { return JSON.parse(l); } catch { return null; }
+      }).filter(Boolean);
+    }
+
+    function moduleOf(path) {
+      const p = String(path || '').replace(/^\/+/, '');
+      if (p.startsWith('api/')) {
+        const rest = p.slice(4);
+        return (rest.split('/')[0] || 'root') || 'root';
+      }
+      return (p.split('/')[0] || 'root') || 'root';
+    }
+
+    function renderSummary(endpoints) {
+      const el = document.getElementById('summary');
+      const total = endpoints.length;
+      const byMethod = endpoints.reduce((acc, e) => { acc[e.method] = (acc[e.method]||0)+1; return acc; }, {});
+      const fmt = (m,c) => `<div class="stat"><span>${m}</span><span class="badge">${c}</span></div>`;
+      el.innerHTML = [
+        `<div class="stat"><strong>Total</strong><span class="badge">${total}</span></div>`,
+        ...['GET','POST','PUT','PATCH','DELETE'].map(m => fmt(m, byMethod[m]||0))
+      ].join('');
+    }
+
+    function renderGroups(endpoints) {
+      const el = document.getElementById('groups');
+      const map = new Map();
+      for (const e of endpoints) {
+        const mod = moduleOf(e.path);
+        map.set(mod, (map.get(mod)||0)+1);
+      }
+      const items = Array.from(map.entries()).sort((a,b)=>b[1]-a[1]);
+      el.innerHTML = items.map(([mod,count]) => `<div class="group-item"><span>${mod}</span><span class="badge">${count}</span></div>`).join('');
+      // cargar dropdown módulos
+      const sel = document.getElementById('module');
+      sel.innerHTML = `<option value="">Todos los módulos</option>` + items.map(([mod]) => `<option>${mod}</option>`).join('');
+    }
+
+    function colorClass(method) { return (['GET','POST','PUT','PATCH','DELETE'].includes(method) ? method : ''); }
+
+    function sortItems(items, sortKey, dir) {
+      const s = (sortKey || '').toLowerCase();
+      const primary = {
+        path: (a,b) => String(a.path).localeCompare(String(b.path)),
+        method: (a,b) => String(a.method).localeCompare(String(b.method)),
+        module: (a,b) => moduleOf(a.path).localeCompare(moduleOf(b.path)),
+      }[s] || ((a,b)=>String(a.path).localeCompare(String(b.path)));
+      const secondary = (a,b) => String(a.path).localeCompare(String(b.path));
+      const sign = (String(dir||'asc').toLowerCase() === 'desc') ? -1 : 1;
+      return items.slice().sort((a,b)=>{
+        const p = primary(a,b);
+        if (p !== 0) return p * sign;
+        return secondary(a,b) * sign;
+      });
+    }
+
+    function renderRows(endpoints) {
+      const tbody = document.getElementById('rows');
+      const q = document.getElementById('q').value.toLowerCase();
+      const mod = document.getElementById('module').value;
+      const meth = document.getElementById('method').value;
+      const sortKey = (document.getElementById('sort')?.value || 'path');
+      const dir = (document.getElementById('dir')?.value || 'asc');
+      const page = parseInt(document.getElementById('page')?.value || '1', 10) || 1;
+      const limit = parseInt(document.getElementById('limit')?.value || '20', 10) || 20;
+      const filt = endpoints.filter(e => {
+        const okQ = q ? (e.method.toLowerCase().includes(q) || e.path.toLowerCase().includes(q)) : true;
+        const okM = meth ? (e.method === meth) : true;
+        const okMod = mod ? (moduleOf(e.path) === mod) : true;
+        return okQ && okM && okMod;
+      });
+      const ordered = sortItems(filt, sortKey, dir);
+      const start = Math.max(0, (page - 1) * limit);
+      const view = ordered.slice(start, start + limit);
+      tbody.innerHTML = view.map(e => `
+        <tr>
+          <td><span class="method ${colorClass(e.method)}">${e.method}</span></td>
+          <td><code>${e.path}</code></td>
+          <td class="muted">${moduleOf(e.path)}</td>
+        </tr>
+      `).join('');
+      const totalPages = Math.max(1, Math.ceil(ordered.length / Math.max(1, limit)));
+      const pageInfo = document.getElementById('pageInfo');
+      if (pageInfo) pageInfo.textContent = `Página ${page} de ${totalPages} · ${ordered.length} resultados`;
+    }
+
+    function updateHashFromControls() {
+      const params = {
+        method: document.getElementById('method').value,
+        module: document.getElementById('module').value,
+        q: document.getElementById('q').value,
+        sort: (document.getElementById('sort')?.value || 'path'),
+        dir: (document.getElementById('dir')?.value || 'asc'),
+        page: parseInt(document.getElementById('page')?.value || '1', 10) || 1,
+        limit: parseInt(document.getElementById('limit')?.value || '20', 10) || 20,
+      };
+      window.URLUtils.setHashFromParams(params);
+    }
+
+    async function main() {
+      const endpoints = await loadJSONL('./endpoints.jsonl');
+      document.getElementById('stamp').textContent = new Date().toLocaleString();
+      renderSummary(endpoints);
+      renderGroups(endpoints);
+      // Controles extra: orden y paginación
+      const controls = document.getElementById('controls');
+      const sortSelect = document.createElement('select');
+      sortSelect.id = 'sort';
+      sortSelect.innerHTML = '<option value="path">Ordenar por ruta</option><option value="method">Ordenar por método</option><option value="module">Ordenar por módulo</option>';
+      const dirSelect = document.createElement('select');
+      dirSelect.id = 'dir';
+      dirSelect.innerHTML = '<option value="asc">Ascendente</option><option value="desc">Descendente</option>';
+      const pageInput = document.createElement('input');
+      pageInput.id = 'page';
+      pageInput.type = 'number';
+      pageInput.min = '1';
+      pageInput.value = '1';
+      const limitInput = document.createElement('input');
+      limitInput.id = 'limit';
+      limitInput.type = 'number';
+      limitInput.min = '1';
+      limitInput.value = '20';
+      const pageInfo = document.createElement('div');
+      pageInfo.id = 'pageInfo';
+      pageInfo.className = 'sub';
+      pageInfo.style.marginTop = '8px';
+      controls.appendChild(sortSelect);
+      controls.appendChild(dirSelect);
+      controls.appendChild(pageInput);
+      controls.appendChild(limitInput);
+      controls.appendChild(pageInfo);
+
+      // Aplicar filtros iniciales desde el hash (method/module/q/sort/page/limit)
+      const init = window.URLUtils.parseHashParams();
+      const { method, module, q, sort, dir, page, limit } = init;
+      if (method) document.getElementById('method').value = method;
+      if (module) {
+        // solo fijar si el módulo existe en el dropdown
+        const sel = document.getElementById('module');
+        const exists = Array.from(sel.options).some(o => o.value === module || o.text === module);
+        if (exists) sel.value = module;
+      }
+      if (q) document.getElementById('q').value = q;
+      if (sort) document.getElementById('sort').value = sort;
+      if (dir) document.getElementById('dir').value = dir;
+      if (page) document.getElementById('page').value = String(page);
+      if (limit) document.getElementById('limit').value = String(limit);
+      renderRows(endpoints);
+      // filtros
+      document.getElementById('q').addEventListener('input', () => { renderRows(endpoints); updateHashFromControls(); });
+      document.getElementById('module').addEventListener('change', () => { renderRows(endpoints); updateHashFromControls(); });
+      document.getElementById('method').addEventListener('change', () => { renderRows(endpoints); updateHashFromControls(); });
+      document.getElementById('sort').addEventListener('change', () => { renderRows(endpoints); updateHashFromControls(); });
+      document.getElementById('dir').addEventListener('change', () => { renderRows(endpoints); updateHashFromControls(); });
+      document.getElementById('page').addEventListener('input', () => { renderRows(endpoints); updateHashFromControls(); });
+      document.getElementById('limit').addEventListener('input', () => { renderRows(endpoints); updateHashFromControls(); });
+      // copiar enlace con filtros
+      document.getElementById('copyLink').setAttribute('data-testid', 'btn-copy-link');
+      document.getElementById('copyLink').addEventListener('click', async () => {
+        try {
+          updateHashFromControls();
+          const params = window.URLUtils.parseHashParams();
+          await window.URLUtils.copyUrlWithParams(params);
+          const btn = document.getElementById('copyLink');
+          const prev = btn.textContent;
+          btn.textContent = 'Copiado ✓';
+          setTimeout(() => { btn.textContent = prev; }, 1200);
+        } catch (e) {
+          alert('No se pudo copiar el enlace: ' + (e?.message || e));
+        }
+      });
+      // Exportaciones filtradas (CSV y JSONL)
+      function currentFiltered(endpoints) {
+        const q = document.getElementById('q').value.toLowerCase();
+        const mod = document.getElementById('module').value;
+        const meth = document.getElementById('method').value;
+        const sortKey = (document.getElementById('sort')?.value || 'path');
+        const dir = (document.getElementById('dir')?.value || 'asc');
+        const filt = endpoints.filter(e => {
+          const okQ = q ? (e.method.toLowerCase().includes(q) || e.path.toLowerCase().includes(q)) : true;
+          const okM = meth ? (e.method === meth) : true;
+          const okMod = mod ? (moduleOf(e.path) === mod) : true;
+          return okQ && okM && okMod;
+        });
+        return sortItems(filt, sortKey, dir);
+      }
+
+      function downloadText(filename, text, mime = 'text/plain') {
+        const blob = new Blob([text], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 250);
+      }
+
+      const btnCsv = document.createElement('button');
+      btnCsv.className = 'btn';
+      btnCsv.id = 'exportCsv';
+      btnCsv.setAttribute('data-testid', 'btn-export-csv');
+      btnCsv.textContent = 'Exportar CSV (filtros)';
+      const btnJsonl = document.createElement('button');
+      btnJsonl.className = 'btn';
+      btnJsonl.id = 'exportJsonl';
+      btnJsonl.setAttribute('data-testid', 'btn-export-jsonl');
+      btnJsonl.textContent = 'Exportar JSONL (filtros)';
+      controls.appendChild(btnCsv);
+      controls.appendChild(btnJsonl);
+
+      btnCsv.addEventListener('click', () => {
+        const rows = currentFiltered(endpoints);
+        const header = 'method,path,module\n';
+        const body = rows.map(e => {
+          const mod = moduleOf(e.path);
+          const esc = (v) => String(v).replace(/"/g,'""');
+          return `"${esc(e.method)}","${esc(e.path)}","${esc(mod)}"`;
+        }).join('\n');
+        downloadText('endpoints.filtered.csv', header + body, 'text/csv');
+      });
+
+      btnJsonl.addEventListener('click', () => {
+        const rows = currentFiltered(endpoints);
+        const body = rows.map(e => JSON.stringify({ method: e.method, path: e.path, module: moduleOf(e.path) })).join('\n');
+        downloadText('endpoints.filtered.jsonl', body, 'application/x-ndjson');
+      });
+      // actualizar si cambia el hash (p. ej., llegada desde un enlace compartido)
+      window.addEventListener('hashchange', () => {
+        const { method, module, q, sort, dir, page, limit } = window.URLUtils.parseHashParams();
+        if (method) document.getElementById('method').value = method; else document.getElementById('method').value = '';
+        const sel = document.getElementById('module');
+        if (module && Array.from(sel.options).some(o => o.value === module || o.text === module)) sel.value = module; else sel.value = '';
+        document.getElementById('q').value = q || '';
+        if (sort) document.getElementById('sort').value = sort; else document.getElementById('sort').value = 'path';
+        if (dir) document.getElementById('dir').value = dir; else document.getElementById('dir').value = 'asc';
+        document.getElementById('page').value = String(page || 1);
+        document.getElementById('limit').value = String(limit || 20);
+        renderRows(endpoints);
+      });
+    }
+    main();
+  </script>
+</body>
+</html>
+

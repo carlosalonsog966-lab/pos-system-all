@@ -1,0 +1,2 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/sales","ventas.save","activate","{""ui"":[""toast"",""routeChanged""],""network"":[{""method"":""POST"",""endpoint"":""/sales""}],""persist"":[""reloadPersist""]}","","","","","","","","FAIL","control no encontrado"

@@ -1,0 +1,2 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/inventory","inventario.delete","activate","{""ui"":[""toast"",""domChanged""],""network"":[{""method"":""DELETE"",""endpoint"":""/products/:id""}]}","","","","","","","","FAIL","control no encontrado"

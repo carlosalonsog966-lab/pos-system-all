@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspector POS - Mini</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: #f8f9fa; 
+            font-size: 14px; 
+        }
+        .inspector-container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            overflow: hidden; 
+        }
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 15px 20px; 
+            font-size: 16px; 
+            font-weight: 500; 
+        }
+        .status-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 12px 20px; 
+            background: #f8f9fa; 
+            border-bottom: 1px solid #dee2e6; 
+        }
+        .status-item { 
+            text-align: center; 
+        }
+        .status-number { 
+            font-size: 18px; 
+            font-weight: bold; 
+            margin-bottom: 2px; 
+        }
+        .status-label { 
+            font-size: 11px; 
+            color: #6c757d; 
+            text-transform: uppercase; 
+        }
+        .problem-indicator { 
+            background: #dc3545; 
+            color: white; 
+            padding: 2px 6px; 
+            border-radius: 10px; 
+            font-size: 10px; 
+            margin-left: 5px; 
+        }
+        .clean-indicator { 
+            background: #28a745; 
+            color: white; 
+            padding: 2px 6px; 
+            border-radius: 10px; 
+            font-size: 10px; 
+            margin-left: 5px; 
+        }
+        .actions { 
+            display: flex; 
+            gap: 10px; 
+            padding: 15px 20px; 
+            background: white; 
+        }
+        .btn { 
+            flex: 1; 
+            padding: 8px 12px; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 12px; 
+            font-weight: 500; 
+            transition: all 0.2s ease; 
+        }
+        .btn:hover { 
+            transform: translateY(-1px); 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15); 
+        }
+        .btn-primary { 
+            background: #667eea; 
+            color: white; 
+        }
+        .btn-danger { 
+            background: #dc3545; 
+            color: white; 
+        }
+        .btn-success { 
+            background: #28a745; 
+            color: white; 
+        }
+        .btn:disabled { 
+            background: #6c757d; 
+            cursor: not-allowed; 
+            transform: none; 
+            box-shadow: none; 
+        }
+        .config-list { 
+            max-height: 200px; 
+            overflow-y: auto; 
+            background: #f8f9fa; 
+            margin: 0 20px 15px; 
+            border-radius: 6px; 
+            border: 1px solid #dee2e6; 
+        }
+        .config-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 8px 12px; 
+            border-bottom: 1px solid #e9ecef; 
+            font-size: 12px; 
+        }
+        .config-item:last-child { 
+            border-bottom: none; 
+        }
+        .config-key { 
+            font-family: 'Courier New', monospace; 
+            color: #495057; 
+            font-weight: 500; 
+        }
+        .config-value { 
+            font-family: 'Courier New', monospace; 
+            color: #6c757d; 
+            font-size: 11px; 
+            max-width: 150px; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap; 
+        }
+        .problem-key { 
+            color: #dc3545; 
+            font-weight: 600; 
+        }
+        .mini-console { 
+            background: #212529; 
+            color: #28a745; 
+            padding: 10px 15px; 
+            font-family: 'Courier New', monospace; 
+            font-size: 11px; 
+            max-height: 120px; 
+            overflow-y: auto; 
+            margin: 0 20px 15px; 
+            border-radius: 6px; 
+        }
+        .console-entry { 
+            margin: 2px 0; 
+        }
+        .console-error { color: #dc3545; }
+        .console-warning { color: #ffc107; }
+        .console-info { color: #17a2b8; }
+        .console-success { color: #28a745; }
+        .hidden { display: none; }
+        .section-title { 
+            font-size: 12px; 
+            font-weight: 600; 
+            color: #495057; 
+            margin: 10px 20px 5px; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+        }
+        .no-problems { 
+            text-align: center; 
+            padding: 20px; 
+            color: #28a745; 
+            font-size: 14px; 
+            font-weight: 500; 
+        }
+        .connection-test { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            padding: 10px 20px; 
+            background: #e3f2fd; 
+            border-top: 1px solid #dee2e6; 
+            font-size: 12px; 
+        }
+        .connection-status { 
+            padding: 4px 8px; 
+            border-radius: 12px; 
+            font-size: 10px; 
+            font-weight: 500; 
+        }
+        .status-connected { 
+            background: #d4edda; 
+            color: #155724; 
+            border: 1px solid #c3e6cb; 
+        }
+        .status-disconnected { 
+            background: #f8d7da; 
+            color: #721c24; 
+            border: 1px solid #f5c6cb; 
+        }
+        .status-testing { 
+            background: #fff3cd; 
+            color: #856404; 
+            border: 1px solid #ffeaa7; 
+        }
+    </style>
+</head>
+<body>
+    <div class="inspector-container">
+        <div class="header">
+            🔍 Inspector POS - Configuraciones
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-number" id="total-configs">-</div>
+                <div class="status-label">Total</div>
+            </div>
+            <div class="status-item">
+                <div class="status-number" id="problem-configs">-</div>
+                <div class="status-label">Problemas</div>
+            </div>
+            <div class="status-item">
+                <div class="status-number" id="backend-status">-</div>
+                <div class="status-label">Backend</div>
+            </div>
+            <div class="status-item">
+                <div class="status-number" id="connection-status">-</div>
+                <div class="status-label">Conexión</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="analizarSistema()">🔍 Analizar</button>
+            <button class="btn btn-danger" onclick="limpiarProblemas()">🧹 Limpiar</button>
+            <button class="btn btn-success" onclick="probarConexion()">⚡ Probar</button>
+        </div>
+
+        <div id="problems-section" class="hidden">
+            <div class="section-title">🚨 Configuraciones Problemáticas</div>
+            <div id="problems-list" class="config-list"></div>
+        </div>
+
+        <div id="no-problems" class="no-problems hidden">
+            ✅ No se encontraron configuraciones problemáticas
+        </div>
+
+        <div class="mini-console" id="console">
+            <div id="console-content">Haz clic en "Analizar" para comenzar...</div>
+        </div>
+
+        <div class="connection-test">
+            <span>Estado:</span>
+            <span id="connection-text">Sin verificar</span>
+            <span id="connection-badge" class="connection-status status-testing">Testing</span>
+        </div>
+    </div>
+
+    <script>
+        const CONFIGS_PROBLEMA = [
+            'observability:useMocks', 'backendDown', '__lastBackendStatus', 'backendStatus', 
+            'useMocks', 'lastHealthCheck', '__backendStatus', 'forceOfflineMode', 
+            '__backendDown', '__useMocks', 'backendStatusOverride', 'forceMockMode',
+            'offlineMode', 'mockMode', 'forceLocalMode', 'pos:offlineMode', 
+            'pos:useMocks', 'pos:backendDown', 'system:offlineMode', 'system:useMocks',
+            'connectionStatus', 'apiConnectionStatus', 'backendConnectionStatus',
+            'forceOnlineMode', 'forceBackendMode', '__lastBackendCheck'
+        ];
+
+        function log(message, type = 'info') {
+            const consoleContent = document.getElementById('console-content');
+            const timestamp = new Date().toLocaleTimeString('es-CO', { hour12: false });
+            const entry = document.createElement('div');
+            entry.className = `console-entry console-${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            consoleContent.appendChild(entry);
+            consoleContent.scrollTop = consoleContent.scrollHeight;
+        }
+
+        function updateConnectionStatus(text, statusClass, badgeText) {
+            document.getElementById('connection-text').textContent = text;
+            const badge = document.getElementById('connection-badge');
+            badge.textContent = badgeText;
+            badge.className = `connection-status ${statusClass}`;
+        }
+
+        function analizarSistema() {
+            log('🔍 Analizando configuraciones...', 'info');
+            
+            const totalConfigs = localStorage.length;
+            let problemConfigs = 0;
+            const problems = [];
+            
+            document.getElementById('total-configs').textContent = totalConfigs;
+            
+            // Buscar configuraciones problemáticas
+            for (let i = 0; i < totalConfigs; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                
+                if (CONFIGS_PROBLEMA.includes(key)) {
+                    problemConfigs++;
+                    problems.push({ key, value, type: 'problema' });
+                    log(`🚨 Problema: ${key} = ${value}`, 'error');
+                } else if (key.includes('mock') || key.includes('offline') || key.includes('backend')) {
+                    problemConfigs++;
+                    problems.push({ key, value, type: 'sospechosa' });
+                    log(`⚠️ Sospechosa: ${key} = ${value}`, 'warning');
+                }
+            }
+            
+            document.getElementById('problem-configs').textContent = problemConfigs;
+            document.getElementById('problem-configs').style.color = problemConfigs > 0 ? '#dc3545' : '#28a745';
+            
+            // Mostrar problemas
+            mostrarProblemas(problems);
+            verificarBackend();
+            
+            log(`✅ Análisis completo: ${problemConfigs} problemas encontrados`, problemConfigs > 0 ? 'warning' : 'success');
+        }
+
+        function mostrarProblemas(problems) {
+            const problemsSection = document.getElementById('problems-section');
+            const noProblems = document.getElementById('no-problems');
+            const problemsList = document.getElementById('problems-list');
+            
+            if (problems.length > 0) {
+                problemsSection.classList.remove('hidden');
+                noProblems.classList.add('hidden');
+                
+                problemsList.innerHTML = '';
+                problems.forEach(problem => {
+                    const item = document.createElement('div');
+                    item.className = 'config-item';
+                    item.innerHTML = `
+                        <div class="config-key ${problem.type === 'problema' ? 'problem-key' : ''}">${problem.key}</div>
+                        <div class="config-value" title="${problem.value}">${problem.value}</div>
+                    `;
+                    problemsList.appendChild(item);
+                });
+            } else {
+                problemsSection.classList.add('hidden');
+                noProblems.classList.remove('hidden');
+            }
+        }
+
+        async function verificarBackend() {
+            updateConnectionStatus('Verificando...', 'status-testing', 'Checking');
+            
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    document.getElementById('backend-status').textContent = '✅';
+                    document.getElementById('backend-status').style.color = '#28a745';
+                    updateConnectionStatus('Backend OK', 'status-connected', 'Online');
+                    log('✅ Backend funcionando correctamente', 'success');
+                } else {
+                    throw new Error('Backend respondió con error');
+                }
+            } catch (error) {
+                document.getElementById('backend-status').textContent = '❌';
+                document.getElementById('backend-status').style.color = '#dc3545';
+                updateConnectionStatus('Backend caído', 'status-disconnected', 'Offline');
+                log(`❌ Backend no accesible: ${error.message}`, 'error');
+            }
+        }
+
+        function limpiarProblemas() {
+            const problems = [];
+            
+            // Buscar configuraciones problemáticas actuales
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (CONFIGS_PROBLEMA.includes(key) || key.includes('mock') || key.includes('offline') || key.includes('backend')) {
+                    problems.push(key);
+                }
+            }
+            
+            if (problems.length === 0) {
+                log('✅ No hay problemas para limpiar', 'info');
+                return;
+            }
+            
+            log(`🧹 Limpiando ${problems.length} configuraciones problemáticas...`, 'warning');
+            
+            problems.forEach(key => {
+                log(`🗑️ Eliminando: ${key}`, 'info');
+                localStorage.removeItem(key);
+            });
+            
+            log(`✅ ${problems.length} configuraciones eliminadas`, 'success');
+            log('🔄 Re-analizando sistema...', 'info');
+            
+            setTimeout(() => analizarSistema(), 1000);
+        }
+
+        async function probarConexion() {
+            log('⚡ Probando conexión con backend...', 'info');
+            updateConnectionStatus('Probando...', 'status-testing', 'Testing');
+            
+            const endpoints = ['/api/health', '/api/categories', '/api/settings/public'];
+            let exitosos = 0;
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint);
+                    if (response.ok) {
+                        exitosos++;
+                        log(`✅ ${endpoint}: Conectado`, 'success');
+                    } else {
+                        log(`❌ ${endpoint}: Error ${response.status}`, 'error');
+                    }
+                } catch (error) {
+                    log(`❌ ${endpoint}: ${error.message}`, 'error');
+                }
+            }
+            
+            if (exitosos === endpoints.length) {
+                updateConnectionStatus('Todo OK', 'status-connected', 'Online');
+                log('🎉 ¡Todas las conexiones funcionan!', 'success');
+                document.getElementById('connection-status').textContent = '✅';
+                document.getElementById('connection-status').style.color = '#28a745';
+            } else if (exitosos > 0) {
+                updateConnectionStatus('Parcial', 'status-testing', 'Partial');
+                log(`⚠️ Conexión parcial: ${exitosos}/${endpoints.length}`, 'warning');
+            } else {
+                updateConnectionStatus('Falló todo', 'status-disconnected', 'Failed');
+                log('❌ Todas las conexiones fallaron', 'error');
+                document.getElementById('connection-status').textContent = '❌';
+                document.getElementById('connection-status').style.color = '#dc3545';
+            }
+        }
+
+        // Auto-análisis al cargar
+        window.addEventListener('load', () => {
+            setTimeout(analizarSistema, 500);
+        });
+    </script>
+</body>
+</html>

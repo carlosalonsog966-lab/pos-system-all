@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "[husky] Validando mensaje de commit con commitlint (convencional)"
+
+# Usar commitlint del paquete backend para evitar instalarlo en raíz
+npx --prefix pos-system/backend commitlint --edit "$1"
+

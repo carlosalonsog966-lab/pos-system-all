@@ -1,0 +1,28 @@
+/* Utilidades globales adicionales para refinar UI */
+
+/* Contenedor centrado */
+.container-center { display: grid; place-items: center; }
+
+/* Panel básico */
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+
+/* Texto secundarios y sutiles */
+.text-alt { color: var(--text-alt); }
+
+/* Separadores */
+.divider { height: 1px; background: var(--line); width: 100%; }
+
+/* Estados */
+.is-ok { color: var(--ok); }
+.is-err { color: var(--err); }
+.is-info { color: var(--info); }
+.is-warn { color: var(--warn); }
+
+/* Botón dorado coherente con tema */
+.btn-gold { background: var(--gold); color: white; border-radius: 10px; padding: 0.5rem 0.9rem; }
+.btn-gold:hover { background: var(--gold-hover); }
+
+/* Ocultar en impresión */
+@media print {
+  .no-print { display: none !important; }
+}

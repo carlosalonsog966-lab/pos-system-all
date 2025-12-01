@@ -1,0 +1,27 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY frontend/package*.json ./
+RUN npm ci || npm install
+
+# Build args para variables VITE_* (se inyectan en tiempo de build)
+ARG VITE_RAYGUN_API_KEY
+ARG VITE_APP_VERSION
+ARG VITE_RAYGUN_PULSE
+
+# Asegurar que Vite lea estas variables
+ENV VITE_RAYGUN_API_KEY=${VITE_RAYGUN_API_KEY}
+ENV VITE_APP_VERSION=${VITE_APP_VERSION}
+ENV VITE_RAYGUN_PULSE=${VITE_RAYGUN_PULSE}
+
+COPY frontend .
+
+# Construir aplicación
+RUN npm run build:fast
+
+ENV PORT=5176
+EXPOSE 5176
+
+# Usar vite preview y exponer en 0.0.0.0
+CMD ["npm", "run", "preview", "--", "--host"]

@@ -1,0 +1,75 @@
+name: Health Smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 6 * * *'
+
+jobs:
+  health-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: health-smoke-${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      EXPECTED_ORIGIN: http://localhost:4173
+      STRICT_CORS_CHECK: '1'
+      REFUND_SMOKE: '1'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install backend deps
+        run: npm ci
+        working-directory: pos-system/backend
+
+      - name: Build backend
+        run: npm run build
+        working-directory: pos-system/backend
+
+      - name: Start backend
+        run: |
+          PORT=5656 FRONTEND_URL=http://localhost:4173 NODE_ENV=production nohup node dist/server.js > server.log 2>&1 &
+          echo $! > server.pid
+        working-directory: pos-system/backend
+
+      - name: Wait for backend health
+        run: |
+          for i in {1..30}; do
+            curl -sSf http://localhost:5656/api/test-health && exit 0
+            sleep 2
+          done
+          echo "Backend no respondió salud" >&2
+          exit 1
+
+      - name: Run health smoke
+        run: |
+          node pos-system/launcher/run-health-smoke.js --once --expected=http://localhost:4173
+
+      - name: List captures
+        run: ls -la pos-system/captures || true
+
+      - name: Upload captures artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-smoke-captures
+          path: |
+            pos-system/captures/*.json
+            pos-system/captures/*.log
+          if-no-files-found: warn
+
+      - name: Stop backend
+        run: |
+          kill $(cat pos-system/backend/server.pid) || true
+          rm -f pos-system/backend/server.pid

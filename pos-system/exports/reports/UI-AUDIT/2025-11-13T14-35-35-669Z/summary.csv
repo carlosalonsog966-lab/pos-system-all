@@ -1,0 +1,2 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/reports","reportes.daily.export-pdf","activate","{""ui"":[""domChanged""],""network"":[{""method"":""GET"",""endpoint"":""/reports/inventory""}]}","","","","","","","","FAIL","control no encontrado"

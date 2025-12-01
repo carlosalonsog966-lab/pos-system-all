@@ -1,0 +1,4 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/observability","observabilidad.sentry.test","activate","{""ui"":[""toast""]}","","","","","","","","PASS","{""networkHit"":false,""domChanged"":false,""routeChanged"":false,""modalChanged"":false,""toast"":false,""consoleErrors"":0,""pageErrors"":0}"
+"POS","/observability","observabilidad.otel.test","activate","{""ui"":[""toast""]}","","","","","","","","PASS","{""networkHit"":false,""domChanged"":false,""routeChanged"":false,""modalChanged"":false,""toast"":false,""consoleErrors"":0,""pageErrors"":0}"
+"POS","/observability","observabilidad.logs.view","activate","{""ui"":[""domChanged""]}","","","","","","","","FAIL","{""networkHit"":false,""domChanged"":false,""routeChanged"":false,""modalChanged"":false,""toast"":false,""consoleErrors"":0,""pageErrors"":0}"

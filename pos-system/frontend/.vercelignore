@@ -1,0 +1,17 @@
+# Deploy only the built frontend
+dist/
+node_modules/
+*.log
+.env*
+.git
+.gitignore
+.vercelignore
+README.md
+*.md
+src/
+public/
+*.config.js
+*.config.ts
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

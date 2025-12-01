@@ -1,0 +1,2 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/dashboard","dashboard.filters.open","activate","{""ui"":[""modalChanged""]}","","","","","","","","FAIL","excepción: page.waitForTimeout: Test timeout of 30000ms exceeded."

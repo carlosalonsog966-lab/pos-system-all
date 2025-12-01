@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reparación Automática POS</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        .container { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+            text-align: center; 
+            max-width: 600px; 
+            width: 90%; 
+        }
+        h1 { 
+            color: #333; 
+            margin-bottom: 20px; 
+            font-size: 2.5em; 
+            font-weight: 300; 
+        }
+        .status { 
+            margin: 30px 0; 
+            padding: 20px; 
+            border-radius: 10px; 
+            font-size: 16px; 
+            line-height: 1.6; 
+        }
+        .error { 
+            background: #fee; 
+            color: #c33; 
+            border: 1px solid #fcc; 
+        }
+        .success { 
+            background: #efe; 
+            color: #363; 
+            border: 1px solid #cfc; 
+        }
+        .warning { 
+            background: #ffeaa7; 
+            color: #d63031; 
+            border: 1px solid #fdcb6e; 
+        }
+        .loading { 
+            background: #e3f2fd; 
+            color: #1976d2; 
+            border: 1px solid #bbdefb; 
+        }
+        .console { 
+            background: #2d3436; 
+            color: #00b894; 
+            padding: 20px; 
+            border-radius: 8px; 
+            font-family: 'Courier New', monospace; 
+            font-size: 13px; 
+            text-align: left; 
+            margin: 20px 0; 
+            max-height: 300px; 
+            overflow-y: auto; 
+        }
+        .console-entry { 
+            margin: 5px 0; 
+            padding: 2px 0; 
+        }
+        .console-error { color: #e74c3c; }
+        .console-success { color: #00b894; }
+        .console-info { color: #74b9ff; }
+        .console-warning { color: #fdcb6e; }
+        .btn { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            border: none; 
+            padding: 15px 30px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            margin: 10px; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+        }
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3); 
+        }
+        .btn:disabled { 
+            background: #95a5a6; 
+            cursor: not-allowed; 
+            transform: none; 
+            box-shadow: none; 
+        }
+        .btn-success { 
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%); 
+        }
+        .btn-danger { 
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); 
+        }
+        .progress-bar { 
+            width: 100%; 
+            height: 6px; 
+            background: #ecf0f1; 
+            border-radius: 3px; 
+            overflow: hidden; 
+            margin: 20px 0; 
+        }
+        .progress-fill { 
+            height: 100%; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            width: 0%; 
+            transition: width 0.3s ease; 
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛠️ REPARACIÓN AUTOMÁTICA POS</h1>
+        
+        <div id="status" class="status loading">
+            <strong>🔍 Analizando el problema de conexión...</strong><br>
+            El sistema está detectando errores de red y cargando datos localmente.
+        </div>
+        
+        <div id="console" class="console" style="display: none;">
+            <div id="console-content"></div>
+        </div>
+        
+        <div id="progress-container" class="progress-bar" style="display: none;">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        
+        <div id="actions">
+            <button id="repararBtn" class="btn">🛠️ Reparar Sistema</button>
+            <button id="diagnosticoBtn" class="btn">🔍 Diagnóstico Completo</button>
+            <button id="recargarBtn" class="btn btn-success hidden">🔄 Volver al Sistema</button>
+        </div>
+    </div>
+
+    <script src="/reparar-sistema.js"></script>
+    <script>
+        const repararBtn = document.getElementById('repararBtn');
+        const diagnosticoBtn = document.getElementById('diagnosticoBtn');
+        const recargarBtn = document.getElementById('recargarBtn');
+        const consoleEl = document.getElementById('console');
+        const consoleContent = document.getElementById('console-content');
+        const statusEl = document.getElementById('status');
+        const progressContainer = document.getElementById('progress-container');
+        const progressFill = document.getElementById('progress-fill');
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('es-CO');
+            const colorClass = `console-${type}`;
+            consoleContent.innerHTML += `<div class="console-entry ${colorClass}">[${timestamp}] ${message}</div>`;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+            
+            // También log en la consola real del navegador
+            if (type === 'error') {
+                console.error(message);
+            } else if (type === 'success') {
+                console.log(`%c✅ ${message}`, 'color: #00b894');
+            } else {
+                console.log(message);
+            }
+        }
+
+        function updateProgress(percentage) {
+            progressFill.style.width = percentage + '%';
+        }
+
+        function mostrarDiagnostico() {
+            window.location.href = '/diagnostico-avanzado.html';
+        }
+
+        async function ejecutarReparacion() {
+            repararBtn.disabled = true;
+            diagnosticoBtn.disabled = true;
+            consoleEl.style.display = 'block';
+            progressContainer.style.display = 'block';
+            
+            log('🛠️ Iniciando reparación automática...', 'info');
+            
+            try {
+                // Paso 1: Diagnóstico rápido
+                log('🔍 Ejecutando diagnóstico rápido...', 'info');
+                updateProgress(10);
+                
+                const problemas = diagnosticoRapido();
+                if (problemas) {
+                    log('⚠️ Se detectaron problemas en el almacenamiento local', 'warning');
+                } else {
+                    log('✅ No se detectaron problemas obvios', 'success');
+                }
+                
+                // Paso 2: Limpiar configuraciones
+                log('🧹 Limpiando configuraciones problemáticas...', 'info');
+                updateProgress(30);
+                
+                // Esperar un momento para que se vea el progreso
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Ejecutar la reparación
+                log('🔧 Ejecutando reparación completa...', 'info');
+                updateProgress(50);
+                
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Llamar a la función de reparación del script externo
+                await repararSistema();
+                
+                updateProgress(100);
+                
+                // Mostrar éxito
+                statusEl.className = 'status success';
+                statusEl.innerHTML = '<strong>🎉 ¡Reparación exitosa!</strong><br>El sistema debería estar funcionando correctamente ahora.';
+                
+                log('✅ Reparación completada exitosamente', 'success');
+                log('🔄 La página se recargará automáticamente en 3 segundos...', 'info');
+                
+                recargarBtn.classList.remove('hidden');
+                
+            } catch (error) {
+                log(`❌ Error durante la reparación: ${error.message}`, 'error');
+                statusEl.className = 'status error';
+                statusEl.innerHTML = '<strong>❌ Error en la reparación</strong><br>Hubo un problema durante el proceso.';
+                
+                repararBtn.disabled = false;
+                diagnosticoBtn.disabled = false;
+            }
+            
+            progressContainer.style.display = 'none';
+        }
+
+        // Event listeners
+        repararBtn.addEventListener('click', ejecutarReparacion);
+        diagnosticoBtn.addEventListener('click', mostrarDiagnostico);
+        recargarBtn.addEventListener('click', () => {
+            window.location.href = '/';
+        });
+
+        // Verificación inicial al cargar
+        window.addEventListener('load', async () => {
+            log('🔍 Sistema de reparación cargado', 'info');
+            
+            // Ejecutar diagnóstico rápido automáticamente
+            const hayProblemas = diagnosticoRapido();
+            
+            if (hayProblemas) {
+                log('⚠️ Se detectaron problemas automáticamente', 'warning');
+                statusEl.innerHTML = '<strong>⚠️ Problemas detectados</strong><br>Se encontraron configuraciones que están causando el modo offline. Haz clic en "Reparar Sistema" para solucionarlo.';
+            } else {
+                // Verificar conexión rápida
+                try {
+                    const response = await fetch('/api/health');
+                    if (response.ok) {
+                        log('✅ Backend respondiendo correctamente', 'success');
+                        statusEl.innerHTML = '<strong>✅ Conexión detectada</strong><br>El backend está respondiendo. Si aún ves errores, usa la reparación para limpiar configuraciones antiguas.';
+                    } else {
+                        log(`⚠️ Backend respondió con estado: ${response.status}`, 'warning');
+                    }
+                } catch (error) {
+                    log(`❌ Error de conexión: ${error.message}`, 'error');
+                    statusEl.innerHTML = '<strong>❌ Error de conexión</strong><br>No se pudo conectar con el backend. Verifica que esté ejecutándose.';
+                }
+            }
+        });
+
+        // Capturar errores no manejados
+        window.addEventListener('error', (event) => {
+            log(`❌ Error no manejado: ${event.message}`, 'error');
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            log(`❌ Promise rechazada: ${event.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>

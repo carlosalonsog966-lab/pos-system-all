@@ -1,0 +1,20 @@
+{
+  "updated": 1,
+  "changes": [
+    {
+      "id": "2b6eac48-e42e-4704-806e-f445c6afa885",
+      "name": "Anillo de Oro de Prueba",
+      "metal": "Oro Amarillo",
+      "grams": 5.5,
+      "oldPrice": 1500,
+      "newPrice": 15469
+    }
+  ],
+  "appliedRates": {
+    "Oro Amarillo": 3000,
+    "Oro Blanco": 3000,
+    "Oro Rosa": 3000,
+    "Plata 925": 80,
+    "Acero Inoxidable": 25
+  }
+}

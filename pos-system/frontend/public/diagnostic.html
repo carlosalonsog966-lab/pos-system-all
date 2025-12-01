@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Diagnóstico del Sistema POS</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: #fbbf24;
+            text-align: center;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        .test-button {
+            background: linear-gradient(45deg, #f59e0b, #fbbf24);
+            color: #1f2937;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+        .success { background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; }
+        .error { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; }
+        .warning { background: rgba(245, 158, 11, 0.2); border: 1px solid #f59e0b; }
+        .info { background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; }
+        .log {
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        .quick-fix {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid #8b5cf6;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Diagnóstico del Sistema POS</h1>
+        
+        <div class="section">
+            <h2>🚀 Estado del Sistema</h2>
+            <div id="system-status">
+                <div class="info">Iniciando diagnóstico...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🧪 Pruebas de Conectividad</h2>
+            <button class="test-button" onclick="testBackend()">Probar Backend</button>
+            <button class="test-button" onclick="testFrontend()">Probar Frontend</button>
+            <button class="test-button" onclick="testDatabase()">Probar Base de Datos</button>
+            <button class="test-button" onclick="testAuth()">Probar Autenticación</button>
+            <div id="connectivity-results" class="log"></div>
+        </div>
+
+        <div class="section">
+            <h2>⚡ Soluciones Rápidas</h2>
+            <div class="quick-fix">
+                <h3>🔥 Forzar Sistema Online</h3>
+                <p>Si ves pantalla negra o "cargando datos localmente":</p>
+                <button class="test-button" onclick="forceOnline()">Forzar Online</button>
+                <button class="test-button" onclick="clearAllStorage()">Limpiar Todo</button>
+                <button class="test-button" onclick="emergencyReset()">Reset Emergencia</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📊 Estado de Servidores</h2>
+            <div id="server-status">
+                <div class="warning">Verificando servidores...</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎯 Acceso Directo al POS</h2>
+            <p>Si el diagnóstico muestra que todo está bien, accede al sistema:</p>
+            <button class="test-button" onclick="accessPOS()">💎 Ir al Sistema POS</button>
+            <button class="test-button" onclick="accessEmergency()">🚨 Página de Emergencia</button>
+        </div>
+    </div>
+
+    <script>
+        let diagnosticLog = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            diagnosticLog.push({ message: logEntry, type });
+            
+            const resultsDiv = document.getElementById('connectivity-results');
+            if (resultsDiv) {
+                const logDiv = document.createElement('div');
+                logDiv.className = `status ${type}`;
+                logDiv.textContent = logEntry;
+                resultsDiv.appendChild(logDiv);
+                resultsDiv.scrollTop = resultsDiv.scrollHeight;
+            }
+        }
+
+        function updateSystemStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('system-status');
+            if (statusDiv) {
+                statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+            }
+        }
+
+        async function testBackend() {
+            log('🧪 Probando conexión con backend...', 'info');
+            try {
+                const response = await fetch('http://localhost:3000/api/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Backend funcionando: ${data.status}`, 'success');
+                    log(`📊 Database: ${data.database?.ok ? 'OK' : 'ERROR'}`, data.database?.ok ? 'success' : 'error');
+                    log(`💾 Filesystem: ${data.filesystem?.ok ? 'OK' : 'ERROR'}`, data.filesystem?.ok ? 'success' : 'error');
+                } else {
+                    log(`❌ Backend error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Backend no responde: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFrontend() {
+            log('🧪 Probando frontend...', 'info');
+            try {
+                const response = await fetch('http://localhost:5174/');
+                if (response.ok) {
+                    log('✅ Frontend cargando correctamente', 'success');
+                } else {
+                    log(`❌ Frontend error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Frontend no accesible: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDatabase() {
+            log('🧪 Probando base de datos...', 'info');
+            try {
+                const response = await fetch('http://localhost:3000/api/products');
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Base de datos conectada: ${data.products?.length || 0} productos`, 'success');
+                } else {
+                    log(`❌ Base de datos error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Base de datos no responde: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAuth() {
+            log('🧪 Probando autenticación...', 'info');
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin', password: 'admin123' })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    log('✅ Autenticación funcionando', 'success');
+                    log(`👤 Usuario: ${data.user?.username}`, 'info');
+                } else {
+                    log(`❌ Autenticación falló: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Autenticación error: ${error.message}`, 'error');
+            }
+        }
+
+        function forceOnline() {
+            log('🔥 Forzando sistema online...', 'warning');
+            try {
+                localStorage.setItem('__lastBackendStatus', 'up');
+                localStorage.setItem('__backendStatusOverride', 'online');
+                localStorage.setItem('__healthCheckStatus', JSON.stringify({ 
+                    status: 'healthy', 
+                    timestamp: Date.now(),
+                    forced: true,
+                    emergency: true
+                }));
+                log('✅ Sistema forzado a ONLINE', 'success');
+                updateSystemStatus('✅ Sistema forzado a ONLINE - Intenta acceder al POS', 'success');
+            } catch (error) {
+                log(`❌ Error forzando online: ${error.message}`, 'error');
+            }
+        }
+
+        function clearAllStorage() {
+            if (confirm('⚠️ ¿Limpiar TODO el almacenamiento local?')) {
+                try {
+                    localStorage.clear();
+                    log('🧹 Almacenamiento local limpiado completamente', 'success');
+                    updateSystemStatus('🧹 Almacenamiento limpiado - Reinicie el sistema', 'success');
+                } catch (error) {
+                    log(`❌ Error limpiando storage: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        function emergencyReset() {
+            log('🚨 Ejecutando reset de emergencia...', 'warning');
+            try {
+                // Limpiar todo el estado problemático
+                const keys = [
+                    '__lastBackendStatus', '__backendStatusOverride', '__healthCheckStatus',
+                    'backendStatus', 'lastHealthCheck', 'offlineMode', 'backendDown',
+                    'lastConnectionError', 'offlineData', 'offlineQueue', 'pendingSync',
+                    'offlineProducts', 'offlineSales', 'offlineClients'
+                ];
+                keys.forEach(key => localStorage.removeItem(key));
+                
+                // Forzar estado limpio
+                localStorage.setItem('__lastBackendStatus', 'up');
+                localStorage.setItem('__backendStatusOverride', 'online');
+                
+                log('✅ Reset de emergencia completado', 'success');
+                updateSystemStatus('✅ Reset completado - Sistema debería funcionar', 'success');
+            } catch (error) {
+                log(`❌ Error en reset: ${error.message}`, 'error');
+            }
+        }
+
+        function accessPOS() {
+            log('🎯 Redirigiendo al sistema POS...', 'info');
+            window.location.href = '/';
+        }
+
+        function accessEmergency() {
+            log('🚨 Abriendo página de emergencia...', 'info');
+            window.location.href = '/emergency-access.html';
+        }
+
+        // Diagnóstico inicial
+        window.onload = function() {
+            log('🔧 Iniciando diagnóstico completo...', 'info');
+            updateSystemStatus('🔄 Ejecutando pruebas de diagnóstico...', 'warning');
+            
+            // Ejecutar pruebas automáticas
+            setTimeout(() => testBackend(), 1000);
+            setTimeout(() => testFrontend(), 2000);
+            setTimeout(() => testDatabase(), 3000);
+            setTimeout(() => testAuth(), 4000);
+            
+            setTimeout(() => {
+                updateSystemStatus('✅ Diagnóstico completado - Usa los botones para más pruebas', 'success');
+            }, 5000);
+        };
+    </script>
+</body>
+</html>

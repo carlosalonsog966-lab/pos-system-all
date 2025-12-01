@@ -1,0 +1,47 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic "Notificaciones":
+    - status [ref=e4]:
+      - generic [ref=e6]:
+        - img [ref=e8]
+        - generic [ref=e10]:
+          - paragraph [ref=e11]: Servidor no disponible
+          - paragraph [ref=e12]: "Acción bloqueada temporalmente: el backend está caído."
+        - button "Cerrar notificación" [ref=e13] [cursor=pointer]:
+          - img [ref=e14]
+  - button "Cerrar todas las notificaciones" [ref=e19] [cursor=pointer]: Cerrar todas
+  - generic [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e25]: J
+      - heading "Iniciar Sesión" [level=1] [ref=e26]
+      - paragraph [ref=e27]: Sistema POS - Joyería
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e31]: Usuario*
+          - textbox "Usuario*" [ref=e33]:
+            - /placeholder: Ingresa tu usuario
+        - generic [ref=e34]:
+          - generic [ref=e35]: Contraseña*
+          - generic [ref=e36]:
+            - textbox "Contraseña*" [ref=e37]:
+              - /placeholder: Ingresa tu contraseña
+            - button [ref=e38] [cursor=pointer]:
+              - img [ref=e39]
+      - paragraph [ref=e43]: Error al iniciar sesión
+      - button "Iniciar Sesión" [disabled] [ref=e45]
+      - generic [ref=e46]:
+        - heading "Usuarios de demostración:" [level=3] [ref=e47]
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - generic [ref=e50]: "Admin:"
+            - generic [ref=e51]: admin / admin123
+          - generic [ref=e52]:
+            - generic [ref=e53]: "Manager:"
+            - generic [ref=e54]: manager / manager123
+          - generic [ref=e55]:
+            - generic [ref=e56]: "Cajero:"
+            - generic [ref=e57]: cashier1 / cashier123
+```

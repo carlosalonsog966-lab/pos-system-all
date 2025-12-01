@@ -1,0 +1,5 @@
+module,route,testId,action,expected,networkHit,domChanged,routeChanged,modalChanged,toast,consoleErrors,pageErrors,result,notes
+"POS","/sales","ventas.select-customer","activate","{""ui"":[""modalChanged""]}","","","","","","","","FAIL","excepción: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:5173/sales
+Call log:
+[2m  - navigating to ""http://localhost:5173/sales"", waiting until ""load""[22m
+"
