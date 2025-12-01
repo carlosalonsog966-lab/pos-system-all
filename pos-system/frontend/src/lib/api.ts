@@ -294,14 +294,10 @@ export async function initializeApiBaseUrl(): Promise<string> {
 
   const candidates = Array.from(
     new Set([
-      // En desarrollo, si VITE_API_URL está definido, preferirlo primero
-      ENV_API_URL,
-      // Intentar mismo origen '/api' (útil si existe proxy en Vite o preview)
-      sameOriginApi || (import.meta.env.DEV ? '/api' : undefined),
-      // DEFAULT_BASE_URL ya considera ENV_API_URL o fallback
-      DEFAULT_BASE_URL,
-      // 🚨 EN PRODUCCIÓN: Solo permitir rutas locales, nunca localhost
       '/api',
+      ENV_API_URL,
+      sameOriginApi || (import.meta.env.DEV ? '/api' : undefined),
+      DEFAULT_BASE_URL,
     ].filter(Boolean))
   ) as string[];
 
@@ -503,10 +499,9 @@ async function __attemptBaseSwitch() {
   if (isMocksEnabled()) return;
   const current = api.defaults.baseURL || DEFAULT_BASE_URL;
   const candidates = Array.from(new Set([
+    '/api',
     ENV_API_URL,
     current,
-    '/api',
-    '/offline', // 🚨 Agregado modo offline para producción
   ].filter(Boolean))) as string[];
   for (const c of candidates) {
     try {
