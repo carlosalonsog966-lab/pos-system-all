@@ -1,9 +1,8 @@
 {
-  "build": {
-    "env": {
-      "VITE_API_URL": "https://tu-backend-en-la-nube.com/api"
-    },
-    "command": "cd pos-system/frontend && npm ci && npm run build",
-    "outputDirectory": "pos-system/frontend/dist"
-  }
+  "version": 2,
+  "buildCommand": "cd pos-system/frontend && npm ci && npm run build",
+  "outputDirectory": "pos-system/frontend/dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
