@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "cd pos-system/frontend && npm run dev",
-    "build": "cd pos-system/frontend && npm ci && npm run build",
+    "build": "cd pos-system/frontend && npm ci && npm run build && mkdir -p ../../public && cp -r dist/* ../../public/",
     "start": "cd pos-system/frontend && npm run preview"
   },
   "dependencies": {},
