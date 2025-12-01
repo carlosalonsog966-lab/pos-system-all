@@ -3,6 +3,7 @@
   "buildCommand": "cd pos-system/frontend && npm ci && npm run build",
   "outputDirectory": "pos-system/frontend/dist",
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://api.opalandcosystem.com/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
