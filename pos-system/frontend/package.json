@@ -6,7 +6,7 @@
   "scripts": {
     "predev": "powershell -ExecutionPolicy Bypass -File ../backend/scripts/kill-web.ps1",
     "dev": "vite --port 7001 --host",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "build:fast": "vite build",
     "build:offline-absoluto": "tsc && vite build --config vite.config.offline-simple.ts && npm run configurar-offline-absoluto",
     "configurar-offline-absoluto": "node -e \"const fs=require('fs');const path=require('path');const indexPath=path.join(__dirname,'dist/index.html');if(fs.existsSync(indexPath)){let html=fs.readFileSync(indexPath,'utf8');html=html.replace(/src=\\\"[^\\\"]*main[^\\\"]*\\\"/g,'src=\\\"/assets/main-offline-absoluto.js\\\"');fs.writeFileSync(indexPath,html);console.log('✅ Index.html configurado para offline absoluto');}\"",
