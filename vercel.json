@@ -1,20 +1,9 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "frontend/dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "frontend/$1"
-    }
-  ],
-  "buildCommand": "cd frontend && npm install && npm run build",
-  "outputDirectory": "frontend/dist"
+  "build": {
+    "env": {
+      "VITE_API_URL": "https://tu-backend-en-la-nube.com/api"
+    },
+    "command": "npm run build",
+    "outputDirectory": "dist"
+  }
 }
