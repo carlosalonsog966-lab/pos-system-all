@@ -1152,7 +1152,7 @@ useEffect(() => {
               </div>
             </div>
 
-            {/* SelecciÃ³n de producto */}
+            {/* Selección de producto */}
             <div className="mb-4">
               <label className="block text-sm font-ui font-medium text-text-warm mb-2">
                 Producto seleccionado
@@ -1198,11 +1198,11 @@ useEffect(() => {
                 className="w-full px-4 py-3 border border-line-soft rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent font-ui"
               />
               <p className="text-xs text-[#8F8F8F] mt-1">
-                Si ingresas datos personalizados, se usarÃ¡n en lugar del Código del producto
+                Si ingresas datos personalizados, se usarán en lugar del Código del producto
               </p>
             </div>
 
-            {/* BotÃ³n generar */}
+            {/* Botón generar */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
                 onClick={handleGenerateCode}
