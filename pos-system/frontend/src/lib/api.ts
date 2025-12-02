@@ -286,7 +286,8 @@ export async function initializeApiBaseUrl(): Promise<string> {
       const proto = (window.location as any).protocol || '';
       const isLocalHost = /^(localhost|127\.0\.0\.1)(:\d+)?$/.test(host);
       const isTauri = proto.startsWith('tauri');
-      if (isLocalHost || isTauri) {
+      const isOpal = /(^|\.)opalandcosystem\.com$/i.test((window.location as any).hostname || '');
+      if (isLocalHost || isTauri || isOpal) {
         sameOriginApi = '/api';
       }
     }
@@ -294,9 +295,9 @@ export async function initializeApiBaseUrl(): Promise<string> {
 
   const candidates = Array.from(
     new Set([
-      '/api',
       ENV_API_URL,
-      sameOriginApi || (import.meta.env.DEV ? '/api' : undefined),
+      sameOriginApi,
+      '/api',
       DEFAULT_BASE_URL,
     ].filter(Boolean))
   ) as string[];

@@ -165,6 +165,11 @@ const computedOrigins = (process.env.CORS_STRICT === 'true' || process.env.CORS_
   : [
       frontendUrl,
       publicOrigin,
+      'https://opalandcosystem.com',
+      'https://www.opalandcosystem.com',
+      'http://localhost:7001',
+      'https://localhost:7001',
+      'http://127.0.0.1:7001',
       `http://${appHost}:${port}`,
       `https://${appHost}:${port}`,
       'http://localhost:5173',

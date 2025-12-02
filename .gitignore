@@ -121,3 +121,5 @@ Cargo.lock
 pos-system/src-tauri/target/release/deps/*.rlib
 pos-system/src-tauri/target/release/build/
 pos-system/src-tauri/target/release/.fingerprint/
+.vercel
+.env*.local

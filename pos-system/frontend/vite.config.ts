@@ -34,11 +34,11 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:7000',
+        target: 'http://127.0.0.1:7000',
         changeOrigin: true,
       },
       '/exports': {
-        target: 'http://localhost:7000',
+        target: 'http://127.0.0.1:7000',
         changeOrigin: true,
       },
     },
