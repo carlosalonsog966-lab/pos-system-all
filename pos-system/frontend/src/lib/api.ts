@@ -293,12 +293,22 @@ export async function initializeApiBaseUrl(): Promise<string> {
     }
   } catch { /* noop */ }
 
-  // En producción, si ENV_API_URL está definido, usarlo DIRECTAMENTE sin probar otros candidatos
-  if (import.meta.env.PROD && ENV_API_URL) {
-    api.defaults.baseURL = ENV_API_URL;
-    apiInitialized = true;
-    console.log('[API] Producción: usando VITE_API_URL directamente:', ENV_API_URL);
-    return ENV_API_URL;
+  // En producción, preferir '/api' relativo para usar el proxy de Vercel
+  // Esto evita problemas de mixed content (HTTPS -> HTTP)
+  if (import.meta.env.PROD) {
+    const useRelative = !ENV_API_URL || ENV_API_URL.startsWith('/');
+    if (useRelative) {
+      api.defaults.baseURL = '/api';
+      apiInitialized = true;
+      console.log('[API] Producción: usando proxy relativo /api');
+      return '/api';
+    } else if (ENV_API_URL) {
+      // Solo usar URL absoluta si está explícitamente configurada
+      api.defaults.baseURL = ENV_API_URL;
+      apiInitialized = true;
+      console.log('[API] Producción: usando VITE_API_URL:', ENV_API_URL);
+      return ENV_API_URL;
+    }
   }
 
   // Construir candidatos solo para desarrollo
