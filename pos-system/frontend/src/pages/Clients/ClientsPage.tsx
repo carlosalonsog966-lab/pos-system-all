@@ -1386,9 +1386,9 @@ const ClientsPage: React.FC<ClientsPageProps> = ({ testMode = false }) => {
         size="lg"
       >
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* InformaciÃ³n bÃ¡sica */}
+          {/* Información bÃ¡sica */}
           <div>
-            <h4 className="text-lg font-medium text-gray-900 mb-4">InformaciÃ³n BÃ¡sica</h4>
+            <h4 className="text-lg font-medium text-gray-900 mb-4">Información Básica</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1430,7 +1430,7 @@ const ClientsPage: React.FC<ClientsPageProps> = ({ testMode = false }) => {
 
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                  TelÃ©fono
+                  Teléfono
                 </label>
                 <input
                   id="phone"
@@ -1464,8 +1464,8 @@ const ClientsPage: React.FC<ClientsPageProps> = ({ testMode = false }) => {
                   onChange={(e) => setFormData(prev => ({ ...prev, documentType: e.target.value as any }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="CC">CÃ©dula de CiudadanÃ­a</option>
-                  <option value="CE">CÃ©dula de ExtranjerÃ­a</option>
+                  <option value="CC">Cédula de Ciudadanía</option>
+                  <option value="CE">Cédula de Extranjería</option>
                   <option value="TI">Tarjeta de Identidad</option>
                   <option value="PP">Pasaporte</option>
                   <option value="NIT">NIT</option>
@@ -1474,7 +1474,7 @@ const ClientsPage: React.FC<ClientsPageProps> = ({ testMode = false }) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  NÃºmero de Documento
+                  Número de Documento
                 </label>
                 <input
                   type="text"
@@ -1486,13 +1486,13 @@ const ClientsPage: React.FC<ClientsPageProps> = ({ testMode = false }) => {
             </div>
           </div>
 
-          {/* InformaciÃ³n de contacto */}
+          {/* Información de contacto */}
           <div>
-            <h4 className="text-lg font-medium text-gray-900 mb-4">InformaciÃ³n de Contacto</h4>
+            <h4 className="text-lg font-medium text-gray-900 mb-4">Información de Contacto</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  DirecciÃ³n
+                  Dirección
                 </label>
                 <input
                   type="text"
@@ -1516,7 +1516,7 @@ const ClientsPage: React.FC<ClientsPageProps> = ({ testMode = false }) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  PaÃ­s
+                  País
                 </label>
                 <input
                   type="text"
@@ -1528,7 +1528,7 @@ const ClientsPage: React.FC<ClientsPageProps> = ({ testMode = false }) => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  CÃ³digo Postal
+                  Código Postal
                 </label>
                 <input
                   type="text"
@@ -1540,9 +1540,9 @@ const ClientsPage: React.FC<ClientsPageProps> = ({ testMode = false }) => {
             </div>
           </div>
 
-          {/* InformaciÃ³n comercial */}
+          {/* Información comercial */}
           <div>
-            <h4 className="text-lg font-medium text-gray-900 mb-4">InformaciÃ³n Comercial</h4>
+            <h4 className="text-lg font-medium text-gray-900 mb-4">Información Comercial</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1663,7 +1663,7 @@ const ClientsPage: React.FC<ClientsPageProps> = ({ testMode = false }) => {
                 <div className="flex items-center">
                   <Target className="h-8 w-8 text-green-600" />
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-500">NÃºmero de Compras</p>
+                    <p className="text-sm font-medium text-gray-500">Número de Compras</p>
                     <p className="text-lg font-bold text-gray-900">{selectedClientForHistory.purchaseCount}</p>
                   </div>
                 </div>

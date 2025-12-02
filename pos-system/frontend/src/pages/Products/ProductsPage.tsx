@@ -101,7 +101,7 @@ interface Product {
   reservedStock: number;
   availableStock: number;
   
-  // CategorizaciÃ³n
+  // Categorización
   category: string | Category;
   subcategory?: string;
   brand?: string;
@@ -186,7 +186,7 @@ interface Product {
 }
 
 interface ProductFormData {
-  // InformaciÃ³n bÃ¡sica
+  // Información básica
   name: string;
   description: string;
   sku: string;
@@ -201,7 +201,7 @@ interface ProductFormData {
   minStock: string;
   maxStock: string;
   
-  // CategorizaciÃ³n
+  // Categorización
   categoryId: string;
   subcategory: string;
   brand: string;
@@ -455,8 +455,8 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
     priceUpdateReason: '',
     priceUpdateCurrency: ''});
   
-  // --- CÃ³digos integrados al flujo de creaciÃ³n ---
-  // Utilidad para normalizar texto a un prefijo de cÃ³digo (sin acentos)
+  // --- Códigos integrados al flujo de creación ---
+  // Utilidad para normalizar texto a un prefijo de código (sin acentos)
   const toPrefix = useCallback((name?: string) => {
     if (!name) return 'PRD';
     const clean = name
@@ -472,7 +472,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
     return prefix || 'PRD';
   }, []);
 
-  // Genera un SKU/cÃ³digo basado en categorÃ­a y nombre con sufijo Ãºnico corto
+  // Genera un SKU/código basado en categorÃ­a y nombre con sufijo Ãºnico corto
   const generateSkuBarcode = useCallback(() => {
     const category = categories.find(c => c.id === formData.categoryId);
     const catPrefix = toPrefix(category?.name);
@@ -488,8 +488,8 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
     try {
       useNotificationStore.getState().addNotification({
         type: 'success',
-        title: 'CÃ³digos generados',
-        message: `Se asignÃ³ '${code}' al SKU y CÃ³digo de Barras.`
+        title: 'Códigos generados',
+        message: `Se asignó '${code}' al SKU y Código de Barras.`
       });
     } catch (error) { console.warn('ProductsPage: failed to update local product stats:', error); }
   }, [generateSkuBarcode]);
@@ -1390,7 +1390,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
   const openProductModal = (product?: Product) => {
     if (product) {
       setEditingProduct(product);
-      // Cargar galerÃ­a de imÃ¡genes del producto
+      // Cargar galerÃ­a de imágenes del producto
       setModalImages([]);
       setModalImagesLoading(true);
       api.get(`/products/${product.id}/images`, { __suppressGlobalError: true as any } as any)
@@ -1399,7 +1399,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           setModalImages(imgs);
         })
         .catch(err => {
-          console.error('Error cargando imÃ¡genes del producto:', err);
+          console.error('Error cargando imágenes del producto:', err);
         })
         .finally(() => setModalImagesLoading(false));
       
@@ -1786,7 +1786,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
 
       // Removido: salePrice ya no se gestiona desde Inventario
       
-      // Helper: generar y persistir cÃ³digo de barras y etiqueta en backend offline
+      // Helper: generar y persistir código de barras y etiqueta en backend offline
       const persistBarcodeAndLabel = async (code: string, name?: string, categoryName?: string, price?: number) => {
         if (!code) return;
         try {
@@ -1794,13 +1794,13 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
         try { const { initializeApiBaseUrl } = await import('@/lib/api'); await initializeApiBaseUrl(); } catch (error) { console.warn('initializeApiBaseUrl failed in ProductsPage:', error); }
           // Backend offline espera claves en espaÃ±ol: codigo, nombre, categoria, precio
           const payload = { codigo: code, nombre: name, categoria: categoryName, precio: price ?? 0 } as any;
-          // Generar y guardar cÃ³digo de barras
+          // Generar y guardar código de barras
           await api.post('/offline/barcode/generate', payload, { __suppressGlobalError: true } as any);
           // Generar y guardar etiqueta
           await api.post('/offline/label/generate', payload, { __suppressGlobalError: true } as any);
         } catch (err) {
           console.warn('Offline barcode/label generation failed:', err);
-          // No bloquea guardado; se puede reintentar mÃ¡s tarde desde mÃ³dulo CÃ³digos
+          // No bloquea guardado; se puede reintentar mÃ¡s tarde desde módulo Códigos
         }
       };
 
@@ -1810,7 +1810,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
         return await QR.toDataURL(data, { margin: 1, width: 300 });
       };
 
-      // Helper: generar DataURL de CÃ³digo de Barras
+      // Helper: generar DataURL de Código de Barras
       const generateBarcodeDataURL = async (data: string): Promise<string> => {
         const JsB = (await import('jsbarcode')).default as any;
         const canvas = document.createElement('canvas');
@@ -1825,7 +1825,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
         return canvas.toDataURL('image/png');
       };
 
-      // Helper: registrar en historial local de CÃ³digos (localStorage: generatedCodes)
+      // Helper: registrar en historial local de Códigos (localStorage: generatedCodes)
       const logGeneratedCodesToHistory = async (product: Product, barcodeData?: string, qrData?: string) => {
         try {
           const saved = localStorage.getItem('generatedCodes');
@@ -1866,7 +1866,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           const next = [...list, ...entries];
           localStorage.setItem('generatedCodes', JSON.stringify(next));
         } catch (err) {
-          console.warn('Error registrando historial de cÃ³digos:', err);
+          console.warn('Error registrando historial de códigos:', err);
         }
       };
 
@@ -1916,14 +1916,14 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
               'Producto actualizado exitosamente',
               `SKU: ${editingProduct.sku} | Nombre: ${editingProduct.name} | Categoría: ${category?.name} | Precio: $${apiPayload.salePrice.toLocaleString()} | Stock: ${apiPayload.stock}`
             );
-            // Disparar generaciÃ³n y persistencia de cÃ³digos en backend offline
+            // Disparar generación y persistencia de códigos en backend offline
             try {
               await persistBarcodeAndLabel(apiPayload.code, apiPayload.name, selectedCategory?.name, apiPayload.salePrice);
             } catch (codeError) {
               console.warn('Error al generar códigos QR/barras:', codeError);
               showError('Producto actualizado, pero hubo un error al generar códigos', 'Puedes generarlos manualmente desde el módulo de Códigos');
             }
-            // Registrar en historial de cÃ³digos (con imÃ¡genes)
+            // Registrar en historial de códigos (con imágenes)
             try {
               const updated = updatedProducts.find(p => p.id === editingProduct.id);
               if (updated) {
@@ -1957,7 +1957,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           setProducts(updatedProducts);
         try { setStoreProducts(updatedProducts); } catch (error) { console.warn('ProductsPage: failed to update store products (2):', error); }
           showSuccess('Producto actualizado exitosamente (modo local)');
-          // Registrar en historial de cÃ³digos (modo local, con imÃ¡genes)
+          // Registrar en historial de códigos (modo local, con imágenes)
           try {
             const updated = updatedProducts.find(p => p.id === editingProduct.id);
             if (updated) {
@@ -2298,7 +2298,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
               'Producto creado exitosamente',
               `SKU: ${newProduct.sku} | Nombre: ${newProduct.name} | Categoría: ${selectedCategory?.name} | Precio: $${apiPayload.salePrice.toLocaleString()} | Stock: ${apiPayload.stock}`
             );
-            // Disparar generaciÃ³n y persistencia de cÃ³digos en backend offline
+            // Disparar generación y persistencia de códigos en backend offline
             const finalCode = newProduct.sku || apiPayload.code;
             try {
               await persistBarcodeAndLabel(finalCode, newProduct.name, selectedCategory?.name, apiPayload.salePrice);
@@ -2306,7 +2306,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
               console.warn('Error al generar códigos QR/barras:', codeError);
               showError('Producto guardado, pero hubo un error al generar códigos', 'Puedes generarlos manualmente desde el módulo de Códigos');
             }
-            // Registrar en historial de cÃ³digos (con imÃ¡genes)
+            // Registrar en historial de códigos (con imágenes)
             try {
               await logGeneratedCodesToHistory(
                 newProduct,
@@ -2354,7 +2354,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           setProducts([...products, newProduct]);
         try { setStoreProducts([...(storeProducts || []), newProduct]); } catch (error) { console.warn('ProductsPage: failed to add new product (2):', error); }
           showSuccess('Producto creado exitosamente (modo local)');
-          // Registrar en historial de cÃ³digos (modo local, con imÃ¡genes)
+          // Registrar en historial de códigos (modo local, con imágenes)
           try {
             await logGeneratedCodesToHistory(
               newProduct,
@@ -2646,7 +2646,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
   
   const exportProducts = () => {
     const csvContent = [
-      ['SKU', 'Nombre', 'DescripciÃ³n', 'Precio Costo', 'Precio Mayoreo', 'Stock', 'Stock MÃ­nimo', 'CategorÃ­a', 'Marca', 'Estado'].join(','),
+      ['SKU', 'Nombre', 'Descripción', 'Precio Costo', 'Precio Mayoreo', 'Stock', 'Stock Mínimo', 'Categoría', 'Marca', 'Estado'].join(','),
       ...filteredProducts.map(product => [
         product.sku,
         `"${product.name}"`,
@@ -3154,7 +3154,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
               <option value="sku">SKU</option>
               <option value="costPrice">Costo</option>
               <option value="stock">Stock</option>
-              <option value="category">CategorÃ­a</option>
+              <option value="category">Categoría</option>
               <option value="createdAt">Fecha creaciÃ³n</option>
               <option value="updatedAt">Ãšltima actualizaciÃ³n</option>
             </select>
@@ -3321,7 +3321,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                     </div>
                   </div>
                   
-                  {/* InformaciÃ³n del producto */}
+                  {/* Información del producto */}
                   <div className="p-4">
                     <div className="flex items-start justify-between mb-2">
                       <h3 className="font-semibold text-gray-900 text-sm line-clamp-2">{product.name}</h3>
@@ -3418,7 +3418,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                     />
                   </th>
                   <th className="px-4 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                     CategorÃ­a
+                     Categoría
                    </th>
                    <th className="px-4 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                      Precio
@@ -3547,7 +3547,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                        <div className="text-sm text-gray-900">{product.sku}</div>
                        {product.barcode && (
-                         <div className="text-xs text-gray-500">CÃ³digo: {product.barcode}</div>
+                         <div className="text-xs text-gray-500">Código: {product.barcode}</div>
                        )}
                      </td>
                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
@@ -3717,7 +3717,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                   <div className="text-2xl font-semibold text-red-600">{importErrors.length}</div>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg border">
-                  <div className="text-sm text-gray-600">CategorÃ­as detectadas</div>
+                  <div className="text-sm text-gray-600">Categorías detectadas</div>
                   <div className="text-2xl font-semibold">{Array.from(new Set(importPreview.map(r => r.category).filter(Boolean))).length}</div>
                 </div>
               </div>
@@ -3745,7 +3745,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Costo</th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">CategorÃ­a</th>
+                      <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoría</th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marca</th>
                     </tr>
                   </thead>
@@ -3956,7 +3956,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                         onClick={() => document.getElementById('modal-gallery-images')?.click()}
                         className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200 border"
                       >
-                        Subir imÃ¡genes a la galerÃ­a
+                        Subir imágenes a la galerÃ­a
                       </button>
                       <input
                         id="modal-gallery-images"
@@ -3979,11 +3979,11 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                               setModalImages(prev => [...prev, ...urls]);
                               showSuccess('ImÃ¡genes aÃ±adidas a la galerÃ­a');
                             } else {
-                              showError('No se aÃ±adieron imÃ¡genes');
+                              showError('No se aÃ±adieron imágenes');
                             }
                           } catch (err) {
                             console.error('Upload error:', err);
-                            showError('Error al subir imÃ¡genes');
+                            showError('Error al subir imágenes');
                           } finally {
                             e.target.value = '';
                           }
@@ -4075,7 +4075,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                               showSuccess('Orden de galerÃ­a guardado');
                             } catch (err) {
                               console.error('Save order error:', err);
-                              showError('Error al guardar el orden de imÃ¡genes');
+                              showError('Error al guardar el orden de imágenes');
                             }
                           }}
                           className="px-3 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
@@ -4087,12 +4087,12 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                   )}
                 </div>
               )}
-              {/* InformaciÃ³n BÃ¡sica */}
+              {/* Información Básica */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-6">
                  <div className="space-y-4">
                    <h4 className="text-md font-medium text-gray-900 flex items-center">
                      <Info className="h-5 w-5 mr-2" />
-                     InformaciÃ³n BÃ¡sica
+                     Información Básica
                    </h4>
                    
                    <div>
@@ -4111,14 +4111,14 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                    
                    <div>
                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                       DescripciÃ³n
+                       Descripción
                      </label>
                      <textarea
                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                        rows={3}
                        value={formData.description}
                        onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                       placeholder="DescripciÃ³n detallada del producto..."
+                       placeholder="Descripción detallada del producto..."
                      />
                    </div>
                    
@@ -4139,7 +4139,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                      
                      <div>
                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                         CÃ³digo de Barras
+                         Código de Barras
                        </label>
                        <input
                          type="text"
@@ -4150,38 +4150,38 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                        />
                      </div>
                    </div>
-                   {/* GeneraciÃ³n de cÃ³digos integrada */}
+                   {/* Generación de códigos integrada */}
                    <div className="mt-2 flex items-center justify-between">
                      <button
                        type="button"
                        onClick={handleGenerateCodes}
                        className="inline-flex items-center px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
-                       title="Generar SKU y CÃ³digo de Barras a partir de la categorÃ­a"
+                       title="Generar SKU y Código de Barras a partir de la categoría"
                      >
                        <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                          <path d="M4 7h1M4 17h1M7 7h1M7 17h1M10 7h1M10 17h1M13 7h1M13 17h1M16 7h1M16 17h1M19 7h1M19 17h1" />
                        </svg>
-                       Generar CÃ³digos
+                       Generar Códigos
                      </button>
                      <div className="text-xs text-gray-600">
-                       Prefijo basado en categorÃ­a y nombre; se asigna al SKU y al cÃ³digo de barras.
+                       Prefijo basado en categoría y nombre; se asigna al SKU y al código de barras.
                      </div>
                    </div>
-                   {/* Vista previa ligera de cÃ³digos */}
+                   {/* Vista previa ligera de códigos */}
                    <div className="mt-2 p-2 border border-gray-200 rounded-md bg-gray-50">
-                     <div className="text-xs text-gray-600 mb-1">Vista previa rÃ¡pida</div>
+                     <div className="text-xs text-gray-600 mb-1">Vista previa rápida</div>
                      <div className="grid grid-cols-2 gap-2">
                        <div>
                          <div className="text-xs font-medium text-gray-700">SKU</div>
-                         <div className="text-sm font-mono text-gray-900">{formData.sku || 'â€”'}</div>
+                         <div className="text-sm font-mono text-gray-900">{formData.sku || '—'}</div>
                        </div>
                        <div>
-                         <div className="text-xs font-medium text-gray-700">CÃ³digo de Barras</div>
-                         <div className="text-sm font-mono text-gray-900">{formData.barcode || formData.sku || 'â€”'}</div>
+                         <div className="text-xs font-medium text-gray-700">Código de Barras</div>
+                         <div className="text-sm font-mono text-gray-900">{formData.barcode || formData.sku || '—'}</div>
                        </div>
                      </div>
                      <div className="mt-1 text-[10px] text-gray-500">
-                       La imagen del cÃ³digo se genera y guarda al guardar el producto.
+                       La imagen del código se genera y guarda al guardar el producto.
                      </div>
                    </div>
                  </div>
@@ -4266,7 +4266,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                  </div>
                </div>
                
-               {/* Stock y CategorizaciÃ³n */}
+               {/* Stock y Categorización */}
                <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-6">
                  {/* Stock */}
                  <div className="space-y-4">
@@ -4292,7 +4292,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                      
                      <div>
                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                         Stock MÃ­nimo
+                         Stock Mínimo
                        </label>
                        <input
                          type="number"
@@ -4306,7 +4306,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                      
                      <div>
                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                         Stock MÃ¡ximo
+                         Stock Máximo
                        </label>
                        <input
                          type="number"
@@ -4320,16 +4320,16 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                    </div>
                  </div>
                  
-                 {/* CategorizaciÃ³n */}
+                 {/* Categorización */}
                  <div className="space-y-4">
                    <h4 className="text-md font-medium text-gray-900 flex items-center">
                      <Tag className="h-5 w-5 mr-2" />
-                     CategorizaciÃ³n
+                     Categorización
                    </h4>
                    
                    <div>
                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                       CategorÃ­a *
+                       Categoría *
                      </label>
                      <select
                        required
@@ -4792,7 +4792,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
          </div>
        )}
        
-       {/* Scanner de CÃ³digo de Barras */}
+       {/* Scanner de Código de Barras */}
        {showScanner && (
         <BarcodeScanner
           isOpen={showScanner}
