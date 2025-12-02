@@ -226,7 +226,8 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ testMode = false }) => {
   });
   // Estado de salud del backend: ok, no_health (sin /health pero con endpoints públicos), down
   const [backendHealthMode, setBackendHealthMode] = useState<'ok' | 'no_health' | 'down'>('ok');
-  // Circuit breaker simple
+  // Circuit breaker simple - usar ref para mantener el valor actual
+  const failureCountRef = useRef(0);
   const [, setFailureCount] = useState(0);
   const [nextRetryAt, setNextRetryAt] = useState<number | null>(null);
   const [refreshInterval, setRefreshInterval] = useState<number>(60000);
@@ -646,8 +647,22 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ testMode = false }) => {
       }));
       // Resetear breaker al éxito
       setFailureCount(0);
+      failureCountRef.current = 0;
       setNextRetryAt(null);
       breakerNotifiedRef.current = false;
+      // Resetear también el tracking de errores detallado
+      setErrorInfo({
+        count: 0,
+        lastError: null,
+        firstErrorTime: null
+      });
+      // Limpiar notificaciones de conexión inestable si existen
+      const notifications = useNotificationStore.getState().notifications;
+      notifications.forEach((n: any) => {
+        if (n.title === 'Conexión inestable') {
+          useNotificationStore.getState().removeNotification(n.id);
+        }
+      });
 
       
       
@@ -695,19 +710,29 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ testMode = false }) => {
         ...prev,
         connectionStatus: 'disconnected'
       }));
-      // Incrementar contador y abrir breaker si supera umbral
+      // Incrementar contador y abrir breaker si supera umbral (aumentado a 5 intentos)
       setFailureCount((prev) => {
         const next = prev + 1;
-        if (next >= 3) {
-          const cooldownMs = 30_000; // 30s
+        // Aumentar umbral a 5 fallos consecutivos antes de activar breaker
+        if (next >= 5) {
+          const cooldownMs = 60_000; // Aumentado a 60s para dar más tiempo
           setNextRetryAt(Date.now() + cooldownMs);
           setRealTimeMetrics((p) => ({ ...p, connectionStatus: 'reconnecting' }));
           if (!breakerNotifiedRef.current) {
+            // Limpiar notificaciones anteriores de conexión inestable antes de agregar nueva
+            const notifications = useNotificationStore.getState().notifications;
+            notifications.forEach((n: any) => {
+              if (n.title === 'Conexión inestable') {
+                useNotificationStore.getState().removeNotification(n.id);
+              }
+            });
             setTimeout(() => {
               addNotification({
                 type: 'warning',
                 title: 'Conexión inestable',
-                message: 'Pausamos intentos por 30s para evitar saturar el servidor.'
+                message: 'Pausamos intentos por 60s para evitar saturar el servidor. Verifica tu conexión.',
+                persistent: false,
+                duration: 6000 // Auto-cerrar después de 6 segundos
               });
             }, 0);
             breakerNotifiedRef.current = true;
