@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+﻿import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   Plus,
   Download,
@@ -112,7 +112,7 @@ interface Product {
   supplier?: Supplier;
   supplierSku?: string;
   
-  // CaracterÃ­sticas fÃ­sicas
+  // Características físicas
   weight?: number;
   dimensions?: {
     length?: number;
@@ -124,7 +124,7 @@ interface Product {
   material?: string;
   size?: string;
   
-  // JoyerÃ­a especÃ­fica
+  // Joyería específica
   metal?: string;
   metalPurity?: string;
   gemstone?: string;
@@ -134,13 +134,13 @@ interface Product {
   gemstoneClarity?: string;
   certification?: string;
   
-  // ImÃ¡genes y multimedia
+  // Imágenes y multimedia
   images: string[];
   primaryImage?: string;
   videos?: string[];
   documents?: string[];
   
-  // Estado y configuraciÃ³n
+  // Estado y configuración
   isActive: boolean;
   isFeatured: boolean;
   isDigital: boolean;
@@ -154,20 +154,20 @@ interface Product {
   lastSoldAt?: string;
   lastRestockedAt?: string;
   
-  // MÃ©tricas
+  // Mó©tricas
   totalSold: number;
   totalRevenue: number;
   averageRating?: number;
   reviewCount: number;
   viewCount: number;
   
-  // ConfiguraciÃ³n de venta
+  // Configuració³n de venta
   taxable: boolean;
   taxRate?: number;
   discountable: boolean;
   maxDiscount?: number;
   
-  // UbicaciÃ³n
+  // Ubicació³n
   location?: {
     warehouse?: string;
     aisle?: string;
@@ -175,7 +175,7 @@ interface Product {
     bin?: string;
   };
   
-  // GarantÃ­a y servicio
+  // Garantó­a y servicio
   warrantyMonths?: number;
   returnPolicy?: string;
   
@@ -212,13 +212,13 @@ interface ProductFormData {
   supplierId: string;
   supplierSku: string;
   
-  // CaracterÃ­sticas
+  // Caracteró­sticas
   weight: string;
   color: string;
   material: string;
   size: string;
   
-  // JoyerÃ­a
+  // Joyeró­a
   metal: string;
   metalPurity: string;
   gemstone: string;
@@ -228,7 +228,7 @@ interface ProductFormData {
   gemstoneClarity: string;
   certification: string;
   
-  // ConfiguraciÃ³n
+  // Configuració³n
   isActive: boolean;
   isFeatured: boolean;
   trackInventory: boolean;
@@ -241,7 +241,7 @@ interface ProductFormData {
   discountable: boolean;
   maxDiscount: string;
   
-  // UbicaciÃ³n
+  // Ubicació³n
   warehouse: string;
   aisle: string;
   shelf: string;
@@ -286,7 +286,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
   
   // Modales
   const [showProductModal, setShowProductModal] = useState(false);
-  // Eliminados modales no utilizados (categorÃ­a, proveedor, importaciÃ³n, movimientos)
+  // Eliminados modales no utilizados (categoró­a, proveedor, importació³n, movimientos)
   const [showStockModal, setShowStockModal] = useState(false);
   const [showBulkModal, setShowBulkModal] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
@@ -367,7 +367,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
     }
   }, [assetsProduct]);
 
-  // Prefetch cuando se abre el modal del escÃ¡ner
+  // Prefetch cuando se abre el modal del escó¡ner
   useEffect(() => {
     if (showScanner) {
       prefetchScannerLib();
@@ -472,7 +472,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
     return prefix || 'PRD';
   }, []);
 
-  // Genera un SKU/código basado en categorÃ­a y nombre con sufijo Ãºnico corto
+  // Genera un SKU/código basado en categoró­a y nombre con sufijo óºnico corto
   const generateSkuBarcode = useCallback(() => {
     const category = categories.find(c => c.id === formData.categoryId);
     const catPrefix = toPrefix(category?.name);
@@ -669,7 +669,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
     reason: ''
   });
   
-  // ImportaciÃ³n de productos (CSV/XLSX)
+  // Importació³n de productos (CSV/XLSX)
   const ImportProductSchema = z.object({
     sku: z.string().min(1, 'SKU requerido'),
     name: z.string().min(1, 'Nombre requerido'),
@@ -696,7 +696,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
   const syncInProgress = Boolean((offlineCtx as any)?.syncInProgress);
   const { products: storeProducts, setProducts: setStoreProducts } = useProductsStore();
   
-  // Modo de prueba via query (?testMode=1) para utilidades de depuraciÃ³n
+  // Modo de prueba via query (?testMode=1) para utilidades de depuració³n
   const queryTestMode = (() => {
     try {
       if (typeof window === 'undefined') return false;
@@ -765,7 +765,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       console.warn('ProductsPage: failed to install fetch audit', e);
     }
   }, [queryTestMode, testMode]);
-  // Disparador: importaciÃ³n de prueba en testMode usando store offline
+  // Disparador: importació³n de prueba en testMode usando store offline
   const handleTestImportClick = async () => {
     try {
       const sample = [
@@ -840,10 +840,10 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           } catch { /* noop */ }
         }
       } catch (e) { /* noop */ }
-      showSuccess('ImportaciÃ³n de prueba procesada (testMode)');
+      showSuccess('Importació³n de prueba procesada (testMode)');
     } catch (err) {
       console.error('ProductsPage: Test import failed', err);
-      showError('FallÃ³ la importaciÃ³n de prueba');
+      showError('Falló³ la importació³n de prueba');
     }
   };
   
@@ -861,21 +861,21 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       
       // Cargar datos reales desde la API
       const [productsResponse, categoriesResponse, suppliersResponse] = await Promise.allSettled([
-        // Solicitar solo productos activos para evitar reapariciÃ³n de eliminados (soft delete)
+        // Solicitar solo productos activos para evitar reaparició³n de eliminados (soft delete)
         api.get('/products?isActive=true', { __suppressGlobalError: true, headers: { 'x-cache-permit': '1', 'x-cache-ttl-ms': '900000' } } as any),
         // No ocultar errores: si falla, lo manejamos abajo y mostramos aviso
         api.get('/categories', { __suppressGlobalError: true } as any),
         api.get('/suppliers', { __suppressGlobalError: true } as any).catch(() => ({ data: { success: true, data: [] } })) // Fallback si no existe endpoint
       ]);
 
-      // Preparar categorÃ­as del backend (con fallback por defecto)
+      // Preparar categoró­as del backend (con fallback por defecto)
       let cats: Category[] = [];
       if (categoriesResponse.status === 'fulfilled' && categoriesResponse.value.data.success && categoriesResponse.value.data.data.length > 0) {
         cats = categoriesResponse.value.data.data as Category[];
         setCategories(cats);
       } else {
-        console.warn('No se pudieron cargar categorÃ­as del backend');
-        try { showWarning('No se pudieron cargar categorÃ­as desde el servidor. Usando categorÃ­as por defecto.'); } catch (error) { console.warn('ProductsPage: failed to show warning:', error); }
+        console.warn('No se pudieron cargar categoró­as del backend');
+        try { showWarning('No se pudieron cargar categoró­as desde el servidor. Usando categoró­as por defecto.'); } catch (error) { console.warn('ProductsPage: failed to show warning:', error); }
         const FALLBACK_CATEGORY_NAMES = ['Anillos', 'Alianzas', 'Cadenas', 'Collares', 'Pulseras', 'Aretes', 'Pendientes', 'Broches', 'Relojes', 'Gemelos', 'Dijes', 'Charms', 'Otros'] as const;
         const nowIso = new Date().toISOString();
         cats = FALLBACK_CATEGORY_NAMES.map(name => ({
@@ -906,25 +906,25 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       if (productsResponse.status === 'fulfilled') {
         const raw = productsResponse.value.data;
         const apiProducts = normalizeListPayloadWithSchema<ProductRaw>(raw, productRawSchema);
-        // Si la API devolviÃ³ datos vÃ¡lidos, usarlos y persistir en store
+        // Si la API devolvió³ datos vó¡lidos, usarlos y persistir en store
         if (Array.isArray(apiProducts) && apiProducts.length > 0) {
           backendProducts = apiProducts as any[];
           try { setStoreProducts(apiProducts as any[]); } catch (error) { console.warn('ProductsPage: failed to set store products:', error); }
         } else {
-          // Fallback: si la API respondiÃ³ vacÃ­a, usar productos del store persistido
-          console.warn('API devolviÃ³ lista vacÃ­a, usando productos en cachÃ©');
+          // Fallback: si la API respondió³ vacó­a, usar productos del store persistido
+          console.warn('API devolvió³ lista vacó­a, usando productos en cachó©');
           backendProducts = Array.isArray(storeProducts) ? storeProducts : [];
         }
       } else {
-        // Fallback: si la API fallÃ³, usar productos del store persistido
-        console.warn('Carga de productos fallida, usando productos en cachÃ©');
+        // Fallback: si la API falló³, usar productos del store persistido
+        console.warn('Carga de productos fallida, usando productos en cachó©');
         backendProducts = Array.isArray(storeProducts) ? storeProducts : [];
       }
 
   const mappedProducts: Product[] = backendProducts.map((bp: any) => {
         const categoryObj = cats.find(c => c.name === bp.category) || {
           id: bp.category || 'unknown',
-          name: bp.category || 'Sin categorÃ­a',
+          name: bp.category || 'Sin categoró­a',
           description: '',
           parentId: undefined,
           isActive: true,
@@ -954,7 +954,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           maxStock: undefined,
           reservedStock: bp.reservedStock ?? 0,
           availableStock: (bp.stock ?? 0) - (bp.reservedStock ?? 0),
-          // Normaliza categorÃ­a a string (nombre) para evitar render de objetos en JSX
+          // Normaliza categoró­a a string (nombre) para evitar render de objetos en JSX
           category: categoryObj.name,
           subcategory: typeof bp.subcategory === 'string' ? bp.subcategory : (bp.subcategory ? String(bp.subcategory) : undefined),
           brand: typeof bp.brand === 'string' ? bp.brand : (bp.brand ? String(bp.brand) : undefined),
@@ -1020,7 +1020,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
     
-    // BÃºsqueda por texto
+    // Bóºsqueda por texto
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(product =>
@@ -1033,14 +1033,14 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       );
     }
     
-    // Filtro por categorÃ­a
+    // Filtro por categoró­a
     if (filters.category) {
       filtered = filtered.filter(product => {
-        // Soporta productos con categorÃ­a como objeto { id, name } o como string (nombre)
+        // Soporta productos con categoró­a como objeto { id, name } o como string (nombre)
         const catId = (product as any)?.category?.id ?? (product as any)?.category;
         if (typeof catId === 'string') {
           if (catId === filters.category) return true; // coincide por id directamente
-          // Si el producto trae categorÃ­a como nombre, intentamos comparar por nombre
+          // Si el producto trae categoró­a como nombre, intentamos comparar por nombre
           const selectedCategoryName = categories.find(c => c.id === filters.category)?.name;
           return selectedCategoryName ? (typeof (product as any)?.category === 'string' ? (product as any)?.category === selectedCategoryName : ((product as any)?.category?.name === selectedCategoryName)) : false;
         }
@@ -1089,7 +1089,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       filtered = filtered.filter(product => product.isFeatured === filters.isFeatured);
     }
 
-    // Filtro por rango de fechas de creaciÃ³n
+    // Filtro por rango de fechas de creació³n
     if (filters.startDate || filters.endDate) {
       filtered = filtered.filter((product) => {
         const created = new Date(product.createdAt);
@@ -1133,7 +1133,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
     return filtered;
   }, [products, filters]);
   
-  // EstadÃ­sticas
+  // Estadó­sticas
   const stats = useMemo(() => {
     const totalProducts = products.length;
     const activeProducts = products.filter(p => p.isActive).length;
@@ -1390,7 +1390,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
   const openProductModal = (product?: Product) => {
     if (product) {
       setEditingProduct(product);
-      // Cargar galerÃ­a de imágenes del producto
+      // Cargar galeró­a de imágenes del producto
       setModalImages([]);
       setModalImagesLoading(true);
       api.get(`/products/${product.id}/images`, { __suppressGlobalError: true as any } as any)
@@ -1420,14 +1420,14 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
         stock: product.stock.toString(),
         minStock: product.minStock.toString(),
         maxStock: product.maxStock?.toString() || '',
-        // Normaliza categoryId aceptando categorÃ­a como objeto o como string (nombre)
+        // Normaliza categoryId aceptando categoró­a como objeto o como string (nombre)
         categoryId: (() => {
           const rawCat: any = (product as any).category;
           if (rawCat && typeof rawCat === 'object') {
             return rawCat.id ?? '';
           }
           if (typeof rawCat === 'string') {
-            // Si es nombre, mapea al id de categorÃ­as conocidas; si no existe, conserva el string
+            // Si es nombre, mapea al id de categoró­as conocidas; si no existe, conserva el string
             return categories.find(c => c.name === rawCat)?.id || rawCat || '';
           }
           return '';
@@ -1637,7 +1637,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       if (!selectedCategory) {
         selectedCategory = categories[0] || {
           id: 'uncategorized',
-          name: 'Sin categorÃ­a',
+          name: 'Sin categoró­a',
           description: '',
           parentId: undefined,
           isActive: true,
@@ -1698,7 +1698,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       };
       
       // Construir payload compatible con el backend
-      // Usar la categorÃ­a ya determinada arriba para evitar redeclaraciones
+      // Usar la categoró­a ya determinada arriba para evitar redeclaraciones
       const selectedCategoryPayload = selectedCategory;
       const selectedSupplier = suppliers.find(s => s.id === formData.supplierId);
 
@@ -1720,7 +1720,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
         const g = String(gemstone || '').toLowerCase();
         if (g.includes('diamante')) return 'Diamante';
         if (g.includes('esmeralda')) return 'Esmeralda';
-        if (g.includes('rubÃ­') || g.includes('rubi')) return 'RubÃ­';
+        if (g.includes('rubó­') || g.includes('rubi')) return 'Rubó­';
         if (g.includes('zafiro')) return 'Zafiro';
         if (g.includes('perla')) return 'Perla';
         return undefined as any;
@@ -1736,7 +1736,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
         material: normalizedMaterial || 'Otros',
         purchasePrice: parseFloat(formData.costPrice) || 0,
         // Alinear con backend: salePrice requerido
-        // Usamos precio de mayoreo como precio de venta si estÃ¡ definido; si no, usamos costo
+        // Usamos precio de mayoreo como precio de venta si estó¡ definido; si no, usamos costo
         salePrice: parseFloat(formData.wholesalePrice) || parseFloat(formData.costPrice) || 0,
         stock: parseInt(formData.stock) || 0,
         minStock: parseInt(formData.minStock) || 0,
@@ -1790,9 +1790,9 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       const persistBarcodeAndLabel = async (code: string, name?: string, categoryName?: string, price?: number) => {
         if (!code) return;
         try {
-          // Asegurar base URL por si el cliente API no estÃ¡ inicializado
+          // Asegurar base URL por si el cliente API no estó¡ inicializado
         try { const { initializeApiBaseUrl } = await import('@/lib/api'); await initializeApiBaseUrl(); } catch (error) { console.warn('initializeApiBaseUrl failed in ProductsPage:', error); }
-          // Backend offline espera claves en espaÃ±ol: codigo, nombre, categoria, precio
+          // Backend offline espera claves en espaó±ol: codigo, nombre, categoria, precio
           const payload = { codigo: code, nombre: name, categoria: categoryName, precio: price ?? 0 } as any;
           // Generar y guardar código de barras
           await api.post('/offline/barcode/generate', payload, { __suppressGlobalError: true } as any);
@@ -1800,7 +1800,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           await api.post('/offline/label/generate', payload, { __suppressGlobalError: true } as any);
         } catch (err) {
           console.warn('Offline barcode/label generation failed:', err);
-          // No bloquea guardado; se puede reintentar mÃ¡s tarde desde módulo Códigos
+          // No bloquea guardado; se puede reintentar mó¡s tarde desde módulo Códigos
         }
       };
 
@@ -2319,7 +2319,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
             }
           }
         } catch (apiError: any) {
-          // Registrar detalles del error para diagnÃ³stico
+          // Registrar detalles del error para diagnó³stico
           const status = apiError?.response?.status;
           const errData = apiError?.response?.data;
           console.warn('API creation failed, using local creation:', {
@@ -2377,9 +2377,9 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
   };
   
   const handleDeleteProduct = async (product: Product) => {
-    if (window.confirm(`Â¿EstÃ¡s seguro de que deseas eliminar "${product.name}"?`)) {
+    if (window.confirm(`Â¿Estó¡s seguro de que deseas eliminar "${product.name}"?`)) {
       try {
-        // Si estÃ¡ offline, encolar acciÃ³n y eliminar localmente
+        // Si estó¡ offline, encolar acció³n y eliminar localmente
         if (isOffline) {
           addPendingAction({
             type: 'DELETE_PRODUCT',
@@ -2397,7 +2397,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           return;
         }
 
-        // Intentar eliminar a travÃ©s de la API
+        // Intentar eliminar a travó©s de la API
         try {
           const response = await api.delete(`/products/${product.id}`);
           
@@ -2410,7 +2410,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
               `"${product.name}" (SKU: ${product.sku}) fue eliminado exitosamente`
             );
           } else {
-            // Si la API no responde como Ã©xito, encolar acciÃ³n
+            // Si la API no responde como ó©xito, encolar acció³n
             addPendingAction({
               type: 'DELETE_PRODUCT',
               data: { id: product.id },
@@ -2427,7 +2427,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           }
         } catch (apiError) {
           console.warn('API deletion failed, queueing offline deletion:', apiError);
-          // Fallback: encolar acciÃ³n si la API falla y eliminar localmente
+          // Fallback: encolar acció³n si la API falla y eliminar localmente
           addPendingAction({
             type: 'DELETE_PRODUCT',
             data: { id: product.id },
@@ -2436,7 +2436,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           });
           setProducts(products.filter(p => p.id !== product.id));
         try { setStoreProducts((products.filter(p => p.id !== product.id))); } catch (error) { console.warn('ProductsPage: failed to remove product (4):', error); }
-          showSuccess('Producto eliminado (pendiente de sincronizaciÃ³n)');
+          showSuccess('Producto eliminado (pendiente de sincronizació³n)');
         }
       } catch (error) {
         console.error('Error deleting product:', error);
@@ -2495,7 +2495,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
         return;
       }
       
-      // Intentar actualizar stock a travÃ©s de la API
+      // Intentar actualizar stock a travó©s de la API
       try {
         const stockData = {
           stock: newStock,
@@ -2583,7 +2583,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
     }
     
     if (!bulkAction.action) {
-      showError('Selecciona una acciÃ³n');
+      showError('Selecciona una acció³n');
       return;
     }
     
@@ -2626,11 +2626,11 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       setSelectedProducts([]);
       setShowBulkModal(false);
       setBulkAction({ action: '', value: '', reason: '' });
-      showSuccess(`AcciÃ³n aplicada a ${selectedProducts.length} productos`);
+      showSuccess(`Acció³n aplicada a ${selectedProducts.length} productos`);
       
     } catch (error) {
       console.error('Error applying bulk action:', error);
-      showError('Error al aplicar la acciÃ³n masiva');
+      showError('Error al aplicar la acció³n masiva');
     }
   };
   
@@ -2655,7 +2655,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
         (product.wholesalePrice ?? ''),
         product.stock,
         product.minStock,
-        // Exporta nombre de categorÃ­a de manera segura (string u objeto)
+        // Exporta nombre de categoró­a de manera segura (string u objeto)
         (typeof (product as any).category === 'string'
           ? (product as any).category
           : (product as any).category?.name || ''),
@@ -2677,8 +2677,8 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
     showSuccess('Productos exportados exitosamente');
   };
 
-  // --- ImportaciÃ³n de productos ---
-  // Lista de categorÃ­as permitidas segÃºn backend
+  // --- Importació³n de productos ---
+  // Lista de categoró­as permitidas segóºn backend
   const JEWELRY_CATEGORIES = ['Anillos', 'Alianzas', 'Cadenas', 'Collares', 'Pulseras', 'Aretes', 'Pendientes', 'Broches', 'Relojes', 'Gemelos', 'Dijes', 'Charms', 'Otros'] as const;
   const normalizeCategory = (raw?: string) => {
     if (!raw) return 'Otros';
@@ -2712,7 +2712,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       setShowImportModal(true);
     } catch (err) {
       console.error('Error parsing import file:', err);
-      showError('No se pudo procesar el archivo de importaciÃ³n');
+      showError('No se pudo procesar el archivo de importació³n');
     }
   };
 
@@ -2723,7 +2723,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
     e.target.value = '';
   };
 
-  // RevisiÃ³n previa de filas importadas: limpiar duplicados y detectar conflictos
+  // Revisió³n previa de filas importadas: limpiar duplicados y detectar conflictos
   const reviewImportRows = useCallback((rows: ProductImportFlexibleRow[]) => {
     const errors: string[] = [];
     const duplicates: string[] = [];
@@ -2749,7 +2749,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       seen.add(sku);
 
       if (existingSkus.has(sku)) {
-        conflicts.push(sku); // Conflicto con catÃ¡logo actual
+        conflicts.push(sku); // Conflicto con cató¡logo actual
       }
 
       // Asegurar que precio de venta no sea menor al costo
@@ -2761,20 +2761,20 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
 
   const applyImport = async () => {
     if (importPreview.length === 0) {
-      showWarning('No hay filas vÃ¡lidas para importar');
+      showWarning('No hay filas vó¡lidas para importar');
       return;
     }
     try {
-      // ValidaciÃ³n previa: limpiar duplicados y detectar conflictos
+      // Validació³n previa: limpiar duplicados y detectar conflictos
       const review = reviewImportRows(importPreview);
       if (review.errors.length > 0) {
-        showWarning(`Se omitieron ${review.errors.length} filas invÃ¡lidas`);
+        showWarning(`Se omitieron ${review.errors.length} filas invó¡lidas`);
       }
       if (review.duplicates.length > 0) {
         showWarning(`SKU duplicados en archivo: ${review.duplicates.slice(0,5).join(', ')}${review.duplicates.length > 5 ? 'â€¦' : ''}`);
       }
       if (review.conflicts.length > 0) {
-        showWarning(`SKU existentes en catÃ¡logo: ${review.conflicts.slice(0,5).join(', ')}${review.conflicts.length > 5 ? 'â€¦' : ''}`);
+        showWarning(`SKU existentes en cató¡logo: ${review.conflicts.slice(0,5).join(', ')}${review.conflicts.length > 5 ? 'â€¦' : ''}`);
       }
 
       // Construir payload para el backend (createProductSchema)
@@ -2799,11 +2799,11 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           imageUrl: undefined,
           barcode: row.sku || undefined,
           supplier: undefined,
-          // Campos opcionales especÃ­ficos omitidos para importaciÃ³n simple
+          // Campos opcionales especó­ficos omitidos para importació³n simple
         } as any;
       });
 
-      // Si estamos offline, encolar importaciÃ³n masiva y actualizar estado local
+      // Si estamos offline, encolar importació³n masiva y actualizar estado local
       if (isOffline) {
         addPendingAction({
           type: 'BULK_IMPORT_PRODUCTS',
@@ -2812,7 +2812,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
           maxRetries: 5,
         });
 
-        // Actualizar vista local con datos bÃ¡sicos mapeados (como antes)
+        // Actualizar vista local con datos bó¡sicos mapeados (como antes)
         const now = new Date().toISOString();
         const mappedLocal: Product[] = review.valid.map(row => {
           const catName = normalizeCategory(row.category);
@@ -2862,11 +2862,11 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
         setShowImportModal(false);
         setImportPreview([]);
         setImportErrors([]);
-        showSuccess(`Se encolÃ³ importaciÃ³n de ${mappedLocal.length} productos (offline)`);
+        showSuccess(`Se encoló³ importació³n de ${mappedLocal.length} productos (offline)`);
         return;
       }
 
-      // Online: usar endpoint de importaciÃ³n masiva
+      // Online: usar endpoint de importació³n masiva
       const response = await api.post('/products/import', {
         items,
         upsert: true,
@@ -2876,15 +2876,15 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
 
       if (response?.data?.success) {
         const summary = response?.data?.data?.summary || {};
-        showSuccess(`ImportaciÃ³n completada: ${summary.created || 0} creados, ${summary.updated || 0} actualizados, ${summary.skipped || 0} omitidos`);
+        showSuccess(`Importació³n completada: ${summary.created || 0} creados, ${summary.updated || 0} actualizados, ${summary.skipped || 0} omitidos`);
         // Recargar datos reales desde servidor
         try {
           await loadInitialData();
         } catch (err) {
-          console.warn('ProductsPage: fallo recargando datos tras importaciÃ³n:', err);
+          console.warn('ProductsPage: fallo recargando datos tras importació³n:', err);
         }
       } else {
-        showWarning('La importaciÃ³n no fue confirmada por el servidor');
+        showWarning('La importació³n no fue confirmada por el servidor');
       }
 
       setShowImportModal(false);
@@ -2892,7 +2892,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       setImportErrors([]);
     } catch (err) {
       console.error('Error applying import:', err);
-      showError('No se pudo aplicar la importaciÃ³n');
+      showError('No se pudo aplicar la importació³n');
     }
   };
   
@@ -2911,7 +2911,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 md:gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Inventario de Productos</h1>
-          <p className="text-gray-600 mt-1">Gestiona tu catÃ¡logo de productos y stock</p>
+          <p className="text-gray-600 mt-1">Gestiona tu cató¡logo de productos y stock</p>
           {/* Banner de estado offline */}
           <div
             data-testid="offline-status-banner"
@@ -2968,7 +2968,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
             Escanear
           </button>
           
-          {/* Input oculto para seleccionar archivo de importaciÃ³n */}
+          {/* Input oculto para seleccionar archivo de importació³n */}
           <input
             ref={fileInputRef}
             type="file"
@@ -3008,7 +3008,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
         </div>
       </div>
       
-      {/* EstadÃ­sticas */}
+      {/* Estadó­sticas */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 md:gap-4">
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center">
@@ -3081,10 +3081,10 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
         </div>
       </div>
       
-      {/* BÃºsqueda y Filtros */}
+      {/* Bóºsqueda y Filtros */}
       <div className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200">
         <div className="flex flex-col lg:flex-row gap-3 md:gap-4">
-          {/* BÃºsqueda */}
+          {/* Bóºsqueda */}
           <div className="flex-1">
             <SearchBar
               value={filters.search}
@@ -3095,7 +3095,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
             />
           </div>
           
-          {/* Filtros rÃ¡pidos */}
+          {/* Filtros ró¡pidos */}
           <div className="flex flex-wrap gap-2">
             <select
               value={filters.category}
@@ -3119,7 +3119,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
               ))}
             </select>
 
-            {/* Rango de fechas de creaciÃ³n */}
+            {/* Rango de fechas de creació³n */}
             <input
               type="date"
               value={filters.startDate || ''}
@@ -3155,8 +3155,8 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
               <option value="costPrice">Costo</option>
               <option value="stock">Stock</option>
               <option value="category">Categoría</option>
-              <option value="createdAt">Fecha creaciÃ³n</option>
-              <option value="updatedAt">Ãšltima actualizaciÃ³n</option>
+              <option value="createdAt">Fecha creació³n</option>
+              <option value="updatedAt">óšltima actualizació³n</option>
             </select>
             
             <button
@@ -3172,16 +3172,16 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
             >
               {filters.viewMode === 'grid' ? <List className="h-4 w-4" /> : <Grid3X3 className="h-4 w-4" />}
             </button>
-            {/* BotÃ³n de importaciÃ³n de prueba (visible si testMode por prop o query) */}
+            {/* Botó³n de importació³n de prueba (visible si testMode por prop o query) */}
             {(queryTestMode || testMode) && (
               <button
                 data-testid="test-import-button"
                 onClick={handleTestImportClick}
                 className="px-3 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors flex items-center"
-                title="Simular importaciÃ³n offline (testMode)"
+                title="Simular importació³n offline (testMode)"
               >
                 <Upload className="h-4 w-4 mr-2" />
-                ImportaciÃ³n de prueba
+                Importació³n de prueba
               </button>
       )}
 
@@ -3206,7 +3206,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                   onClick={() => setSelectedProducts([])}
                   className="px-3 py-1 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 transition-colors"
                 >
-                  Limpiar selecciÃ³n
+                  Limpiar selecció³n
                 </button>
               </div>
             </div>
@@ -3218,12 +3218,12 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       {/* Lista/Grid de productos */}
       <div className="bg-white rounded-lg border border-gray-200">
         {filters.viewMode === 'grid' ? (
-          // Vista de cuadrÃ­cula
+          // Vista de cuadró­cula
           <div className="p-4 sm:p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
               {filteredProducts.map((product) => (
                 <div key={product.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                  {/* Checkbox de selecciÃ³n */}
+                  {/* Checkbox de selecció³n */}
                   <div className="absolute top-2 left-2 z-10">
                     <input
                       type="checkbox"
@@ -3277,7 +3277,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
       )}
 
     </div>
-                    {/* BotÃ³n para cambiar imagen en tarjeta */}
+                    {/* Botó³n para cambiar imagen en tarjeta */}
                     <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded shadow">
                       <button
                         onClick={() => {
@@ -3362,7 +3362,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                     </div>
                     
                     <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>{typeof product.category === 'string' ? product.category : (product.category?.name ?? 'Sin categorÃ­a')}</span>
+                      <span>{typeof product.category === 'string' ? product.category : (product.category?.name ?? 'Sin categoró­a')}</span>
                       {product.brand && (
                         <span>{typeof product.brand === 'string' ? product.brand : String(product.brand)}</span>
                       )}
@@ -3465,7 +3465,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                               <Package className="h-6 w-6 text-gray-400" />
                             </div>
                           )}
-                          {/* BotÃ³n para cambiar imagen */}
+                          {/* Botó³n para cambiar imagen */}
                           <div className="mt-1">
                             <button
                               onClick={() => {
@@ -3552,7 +3552,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                      </td>
                      <td className="px-4 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                  {typeof product.category === 'string' ? product.category : (product.category?.name ?? 'Sin categorÃ­a')}
+                  {typeof product.category === 'string' ? product.category : (product.category?.name ?? 'Sin categoró­a')}
                        </span>
                        {product.subcategory && (
                          <div className="text-xs text-gray-500 mt-1">{typeof product.subcategory === 'string' ? product.subcategory : String(product.subcategory)}</div>
@@ -3581,7 +3581,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                          )}
                        </div>
                        <div className="text-xs text-gray-500">
-                         MÃ­n: {product.minStock}
+                         Mó­n: {product.minStock}
                          {product.reservedStock > 0 && ` | Reservado: ${product.reservedStock}`}
                        </div>
                        <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
@@ -3693,7 +3693,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
          )}
        </div>
       
-      {/* Modal de ImportaciÃ³n */}
+      {/* Modal de Importació³n */}
       {showImportModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg w-full max-w-5xl max-h-[90vh] overflow-y-auto">
@@ -3709,7 +3709,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
             <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-gray-50 p-4 rounded-lg border">
-                  <div className="text-sm text-gray-600">Filas vÃ¡lidas</div>
+                  <div className="text-sm text-gray-600">Filas vó¡lidas</div>
                   <div className="text-2xl font-semibold">{importPreview.length}</div>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg border">
@@ -3724,7 +3724,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
 
               {importErrors.length > 0 && (
                 <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg">
-                  <div className="font-medium mb-2">Errores de validaciÃ³n</div>
+                  <div className="font-medium mb-2">Errores de validació³n</div>
                   <ul className="text-sm list-disc ml-5 space-y-1 max-h-40 overflow-y-auto">
                     {importErrors.slice(0, 50).map((e, i) => (
                       <li key={i}>{e}</li>
@@ -3782,7 +3782,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                   disabled={importPreview.length === 0}
                   className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
                 >
-                  Aplicar importaciÃ³n
+                  Aplicar importació³n
                 </button>
               </div>
             </div>
@@ -3867,19 +3867,19 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
              </div>
              {import.meta.env.DEV && (
                <div className="mx-4 mt-3 mb-1 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-md p-2 text-xs">
-                 <div className="font-medium">DepuraciÃ³n de envÃ­o</div>
+                 <div className="font-medium">Depuració³n de envó­o</div>
                  <div>baseURL: {String((api as any)?.defaults?.baseURL || '')}</div>
-                 <div>auth: {((api as any)?.defaults?.headers?.common?.['Authorization'] ? 'sÃ­' : 'no')}</div>
+                 <div>auth: {((api as any)?.defaults?.headers?.common?.['Authorization'] ? 'só­' : 'no')}</div>
                </div>
              )}
              
              <form onSubmit={handleSubmitProduct} className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-              {/* ImÃ¡genes del Producto */}
+              {/* Imó¡genes del Producto */}
               {editingProduct && (
                 <div className="space-y-4">
                   <h4 className="text-md font-medium text-gray-900 flex items-center">
                     <Gem className="h-5 w-5 mr-2" />
-                    ImÃ¡genes del Producto
+                    Imó¡genes del Producto
                   </h4>
                   <div className="flex items-center gap-3 md:gap-4">
                     <div className="w-24 h-24 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden border">
@@ -3956,7 +3956,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                         onClick={() => document.getElementById('modal-gallery-images')?.click()}
                         className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200 border"
                       >
-                        Subir imágenes a la galerÃ­a
+                        Subir imágenes a la galeró­a
                       </button>
                       <input
                         id="modal-gallery-images"
@@ -3977,9 +3977,9 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                             const urls: string[] = resp?.data?.data?.images || [];
                             if (urls.length) {
                               setModalImages(prev => [...prev, ...urls]);
-                              showSuccess('ImÃ¡genes aÃ±adidas a la galerÃ­a');
+                              showSuccess('Imó¡genes aó±adidas a la galeró­a');
                             } else {
-                              showError('No se aÃ±adieron imágenes');
+                              showError('No se aó±adieron imágenes');
                             }
                           } catch (err) {
                             console.error('Upload error:', err);
@@ -3991,7 +3991,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                       />
                     </div>
                     {modalImagesLoading && (
-                      <span className="text-xs text-gray-500">Cargando galerÃ­a...</span>
+                      <span className="text-xs text-gray-500">Cargando galeró­a...</span>
                     )}
                   </div>
 
@@ -4042,7 +4042,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                               type="button"
                               onClick={async () => {
                                 if (!editingProduct) return;
-                                if (!window.confirm('Â¿Eliminar esta imagen de la galerÃ­a?')) return;
+                                if (!window.confirm('Â¿Eliminar esta imagen de la galeró­a?')) return;
                                 try {
                                   await api.delete(`/products/${editingProduct.id}/images`, { data: { url }, __suppressGlobalError: true as any } as any);
                                   setModalImages(prev => prev.filter(u => u !== url));
@@ -4050,7 +4050,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                                     setEditingProduct(prev => prev ? { ...prev, primaryImage: undefined } : prev);
                                     setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, primaryImage: undefined } : p));
                                   }
-                                  showSuccess('Imagen eliminada de la galerÃ­a');
+                                  showSuccess('Imagen eliminada de la galeró­a');
                                 } catch (err) {
                                   console.error('Delete image error:', err);
                                   showError('Error al eliminar la imagen');
@@ -4072,7 +4072,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                             try {
                               await api.put(`/products/${editingProduct.id}/images/order`, { order: modalImages } as any, { __suppressGlobalError: true as any } as any);
                               try { apiUtils.invalidateCache('/products'); } catch {}
-                              showSuccess('Orden de galerÃ­a guardado');
+                              showSuccess('Orden de galeró­a guardado');
                             } catch (err) {
                               console.error('Save order error:', err);
                               showError('Error al guardar el orden de imágenes');
@@ -4337,7 +4337,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                        value={formData.categoryId}
                        onChange={(e) => setFormData(prev => ({ ...prev, categoryId: e.target.value }))}
                      >
-                       <option value="">Seleccionar categorÃ­a</option>
+                       <option value="">Seleccionar categoró­a</option>
                        {categories.map(category => (
                          <option key={category.id} value={category.id}>{category.name}</option>
                        ))}
@@ -4347,7 +4347,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                    <div className="grid grid-cols-2 gap-3 md:gap-4">
                      <div>
                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                         SubcategorÃ­a
+                         Subcategoró­a
                        </label>
                        <input
                          type="text"
@@ -4374,11 +4374,11 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                  </div>
                </div>
                
-               {/* CaracterÃ­sticas de JoyerÃ­a */}
+               {/* Caracteró­sticas de Joyeró­a */}
                <div className="space-y-4">
                  <h4 className="text-md font-medium text-gray-900 flex items-center">
                    <Gem className="h-5 w-5 mr-2" />
-                   CaracterÃ­sticas de JoyerÃ­a
+                   Caracteró­sticas de Joyeró­a
                  </h4>
                  
                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-4">
@@ -4449,7 +4449,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                        <option value="">Sin piedra</option>
                        <option value="Diamante">Diamante</option>
                        <option value="Esmeralda">Esmeralda</option>
-                       <option value="RubÃ­">RubÃ­</option>
+                       <option value="Rubó­">Rubó­</option>
                        <option value="Zafiro">Zafiro</option>
                        <option value="Perla">Perla</option>
                        <option value="Amatista">Amatista</option>
@@ -4509,11 +4509,11 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                  </div>
                </div>
                
-               {/* ConfiguraciÃ³n */}
+               {/* Configuració³n */}
                <div className="space-y-4">
                  <h4 className="text-md font-medium text-gray-900 flex items-center">
                    <Settings className="h-5 w-5 mr-2" />
-                   ConfiguraciÃ³n
+                   Configuració³n
                  </h4>
                  
                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -4571,7 +4571,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                  </div>
                </div>
                
-               {/* Botones de acciÃ³n */}
+               {/* Botones de acció³n */}
                <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
                  <button
                    type="button"
@@ -4672,11 +4672,11 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                    <option value="">Seleccionar motivo</option>
                    <option value="Compra">Compra</option>
                    <option value="Venta">Venta</option>
-                   <option value="DevoluciÃ³n">DevoluciÃ³n</option>
-                   <option value="DaÃ±o">DaÃ±o</option>
-                   <option value="PÃ©rdida">PÃ©rdida</option>
+                   <option value="Devolució³n">Devolució³n</option>
+                   <option value="Daó±o">Daó±o</option>
+                   <option value="Pó©rdida">Pó©rdida</option>
                    <option value="Inventario inicial">Inventario inicial</option>
-                   <option value="CorrecciÃ³n">CorrecciÃ³n</option>
+                   <option value="Correcció³n">Correcció³n</option>
                  </select>
                </div>
                
@@ -4725,14 +4725,14 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
              <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                <div>
                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                   AcciÃ³n
+                   Acció³n
                  </label>
                  <select
                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                    value={bulkAction.action}
                    onChange={(e) => setBulkAction(prev => ({ ...prev, action: e.target.value }))}
                  >
-                   <option value="">Seleccionar acciÃ³n</option>
+                   <option value="">Seleccionar acció³n</option>
                    <option value="activate">Activar productos</option>
                    <option value="deactivate">Desactivar productos</option>
                    <option value="feature">Marcar como destacados</option>
@@ -4769,7 +4769,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                    value={bulkAction.reason}
                    onChange={(e) => setBulkAction(prev => ({ ...prev, reason: e.target.value }))}
-                   placeholder="Motivo de la acciÃ³n masiva"
+                   placeholder="Motivo de la acció³n masiva"
                  />
                </div>
              </div>
@@ -4785,7 +4785,7 @@ const ProductsPage: React.FC<ProductsPageProps> = ({ testMode = false }) => {
                  onClick={handleBulkAction}
                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                >
-                 Aplicar AcciÃ³n
+                 Aplicar Acció³n
                </button>
              </div>
            </div>
