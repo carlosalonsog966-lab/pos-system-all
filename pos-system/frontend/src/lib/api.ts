@@ -293,14 +293,22 @@ export async function initializeApiBaseUrl(): Promise<string> {
     }
   } catch { /* noop */ }
 
+  // Priorizar ENV_API_URL si está definido (producción)
   const candidates = Array.from(
     new Set([
-      ENV_API_URL,
+      ENV_API_URL, // Primera prioridad: variable de entorno
       sameOriginApi,
       '/api',
       DEFAULT_BASE_URL,
     ].filter(Boolean))
   ) as string[];
+  
+  // En producción, si ENV_API_URL está definido, usarlo directamente sin probar otros
+  if (import.meta.env.PROD && ENV_API_URL) {
+    api.defaults.baseURL = ENV_API_URL;
+    apiInitialized = true;
+    return ENV_API_URL;
+  }
 
   for (const candidate of candidates) {
     const ok = await tryHealth(candidate);
